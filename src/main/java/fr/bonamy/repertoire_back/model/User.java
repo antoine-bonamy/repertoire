@@ -1,13 +1,28 @@
-package fr.bonamy.repertoire_back.core;
+package fr.bonamy.repertoire_back.model;
+
+import jakarta.persistence.*;
 
 import java.util.Objects;
 
+
+@Entity
+@Table(name = "USER")
 public class User {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "firstname")
     private String firstname;
+
+    @Column(name = "lastname")
     private String lastname;
+
+    @Column(name = "email", unique = true)
     private String email;
+
+    @Column(name = "password")
     private String password;
 
     public User() {}

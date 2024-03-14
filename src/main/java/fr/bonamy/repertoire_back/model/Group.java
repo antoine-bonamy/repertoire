@@ -1,4 +1,4 @@
-package fr.bonamy.repertoire_back.core;
+package fr.bonamy.repertoire_back.model;
 
 import java.util.List;
 import java.util.Objects;
