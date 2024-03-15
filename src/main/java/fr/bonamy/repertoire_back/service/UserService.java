@@ -29,7 +29,7 @@ public class UserService {
 
     public UserFrontDto getUserById(Long id) {
         Optional<User> userOptional = userRepository.findById(id);
-        return userOptional.map(userMapper::toDto).orElseThrow(()-> new ResourceNotFoundException(id));
+        return userOptional.map(userMapper::toDto).orElseThrow(() -> new ResourceNotFoundException(id));
     }
 
     public List<UserFrontDto> getAllUsers() {
@@ -41,8 +41,9 @@ public class UserService {
     public Page<UserFrontDto> searchUsers(String keyword, String sortBy, String sortOrder, int page, int size) {
         Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
-        return userRepository.findByFirstnameContainingIgnoreCaseOrLastnameContainingIgnoreCaseOrEmailContainingIgnoreCase(keyword, keyword, keyword, pageable)
-                .map(userMapper::toDto);
+        return userRepository.
+                findByFirstnameContainingIgnoreCaseOrLastnameContainingIgnoreCaseOrEmailContainingIgnoreCase(keyword,
+                        keyword, keyword, pageable).map(userMapper::toDto);
     }
 
     public UserFrontDto createUser(UserFormDto userDTO) {
@@ -57,7 +58,7 @@ public class UserService {
     }
 
     public UserFrontDto updateUser(Long id, UserFormDto userDTO) {
-        userRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException(id));
+        userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
         User newUser = userMapper.toEntity(userDTO);
         newUser.setId(id);
         userRepository.save(newUser);
