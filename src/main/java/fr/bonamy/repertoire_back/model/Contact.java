@@ -11,13 +11,14 @@ public class Contact {
     private String phone;
     private String address;
     private String comment;
+    private Boolean isPublic;
     private Organization organization;
     private User user;
 
     public Contact() {
     }
 
-    public Contact(Long id, String firstname, String lastname, String email, String phone, String address, String comment, Organization organization, User user) {
+    public Contact(Long id, String firstname, String lastname, String email, String phone, String address, String comment, Boolean isPublic, Organization organization, User user) {
         this.id = id;
         this.firstname = firstname;
         this.lastname = lastname;
@@ -25,6 +26,7 @@ public class Contact {
         this.phone = phone;
         this.address = address;
         this.comment = comment;
+        this.isPublic = isPublic;
         this.organization = organization;
         this.user = user;
     }
@@ -85,6 +87,14 @@ public class Contact {
         this.comment = comment;
     }
 
+    public Boolean getPublic() {
+        return isPublic;
+    }
+
+    public void setPublic(Boolean aPublic) {
+        isPublic = aPublic;
+    }
+
     public Organization getOrganization() {
         return organization;
     }
@@ -106,12 +116,12 @@ public class Contact {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Contact contact = (Contact) o;
-        return Objects.equals(id, contact.id) && Objects.equals(firstname, contact.firstname) && Objects.equals(lastname, contact.lastname) && Objects.equals(email, contact.email) && Objects.equals(phone, contact.phone) && Objects.equals(address, contact.address) && Objects.equals(comment, contact.comment) && Objects.equals(organization, contact.organization) && Objects.equals(user, contact.user);
+        return Objects.equals(id, contact.id) && Objects.equals(firstname, contact.firstname) && Objects.equals(lastname, contact.lastname) && Objects.equals(email, contact.email) && Objects.equals(phone, contact.phone) && Objects.equals(address, contact.address) && Objects.equals(comment, contact.comment) && Objects.equals(isPublic, contact.isPublic) && Objects.equals(organization, contact.organization) && Objects.equals(user, contact.user);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstname, lastname, email, phone, address, comment, organization, user);
+        return Objects.hash(id, firstname, lastname, email, phone, address, comment, isPublic, organization, user);
     }
 
     @Override
@@ -124,8 +134,10 @@ public class Contact {
                 ", phone='" + phone + '\'' +
                 ", address='" + address + '\'' +
                 ", comment='" + comment + '\'' +
+                ", isPublic=" + isPublic +
                 ", organization=" + organization +
                 ", user=" + user +
                 '}';
     }
+
 }
