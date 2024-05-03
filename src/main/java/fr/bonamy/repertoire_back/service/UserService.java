@@ -49,7 +49,7 @@ public class UserService {
     public UserFrontDto createUser(UserFormDto userDTO) {
         User user = userMapper.toEntity(userDTO);
         User probe = new User();
-        probe.setEmail("email");
+        probe.setEmail(user.getEmail());
         if (userRepository.exists(Example.of(probe))) {
             throw new ResourceAlreadyExist(user.getEmail());
         }
@@ -66,11 +66,8 @@ public class UserService {
     }
 
     public boolean deleteUser(Long id) {
-        Optional<User> userOptional = userRepository.findById(id);
-        if (userOptional.isPresent()) {
-            userRepository.deleteById(id);
-            return true;
-        }
-        return false;
+        userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
+        userRepository.deleteById(id);
+        return true;
     }
 }

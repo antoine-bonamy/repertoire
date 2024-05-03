@@ -27,7 +27,7 @@ public class GlobalExceptionHandler{
     @ExceptionHandler(value = ResourceAlreadyExist.class)
     public ResponseEntity<ErrorMessage> resourceAlreadyExist(ResourceAlreadyExist e) {
         ErrorMessage msg = new ErrorMessage(HttpStatus.NOT_FOUND, new Date(),
-                ErrorMessage.Message.USER_NOT_FOUND.getMessage(e.getValue()));
+                ErrorMessage.Message.USER_ALREADY_EXIST.getMessage(e.getValue()));
         return ResponseEntity.status(HttpStatus.CONFLICT).body(msg);
     }
 
