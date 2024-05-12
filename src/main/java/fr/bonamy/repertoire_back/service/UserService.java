@@ -18,6 +18,9 @@ import java.util.stream.Collectors;
 @Service
 public class UserService {
 
+    private static final String USER_NOT_FOUND = "User with id : %s not found.";
+    private static final String USER_ALREADY_EXIST = "User with email : %s already exist.";
+
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
@@ -29,7 +32,8 @@ public class UserService {
 
     public UserFrontDto getUserById(Long id) {
         Optional<User> userOptional = userRepository.findById(id);
-        return userOptional.map(userMapper::toDto).orElseThrow(() -> new ResourceNotFoundException(id));
+        return userOptional.map(userMapper::toDto).orElseThrow(
+                () -> new ResourceNotFoundException(String.format(USER_NOT_FOUND, id)));
     }
 
     public List<UserFrontDto> getAllUsers() {
@@ -42,8 +46,8 @@ public class UserService {
         Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
         return userRepository.
-                findByFirstnameContainingIgnoreCaseOrLastnameContainingIgnoreCaseOrEmailContainingIgnoreCase(keyword,
-                        keyword, keyword, pageable).map(userMapper::toDto);
+                findByFirstnameContainingIgnoreCaseOrLastnameContainingIgnoreCaseOrEmailContainingIgnoreCase(
+                        keyword, keyword, keyword, pageable).map(userMapper::toDto);
     }
 
     public UserFrontDto createUser(UserFormDto userDTO) {
@@ -51,14 +55,14 @@ public class UserService {
         User probe = new User();
         probe.setEmail(user.getEmail());
         if (userRepository.exists(Example.of(probe))) {
-            throw new ResourceAlreadyExist(user.getEmail());
+            throw new ResourceAlreadyExist(String.format(USER_ALREADY_EXIST, user.getEmail()));
         }
         user = userRepository.save(user);
         return userMapper.toDto(user);
     }
 
     public UserFrontDto updateUser(Long id, UserFormDto userDTO) {
-        userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
+        userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(String.format(USER_NOT_FOUND, id)));
         User newUser = userMapper.toEntity(userDTO);
         newUser.setId(id);
         userRepository.save(newUser);
@@ -66,7 +70,7 @@ public class UserService {
     }
 
     public boolean deleteUser(Long id) {
-        userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
+        userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(String.format(USER_NOT_FOUND, id)));
         userRepository.deleteById(id);
         return true;
     }

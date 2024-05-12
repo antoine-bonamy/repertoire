@@ -15,19 +15,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
-public class GlobalExceptionHandler{
+public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = ResourceNotFoundException.class)
     public ResponseEntity<ErrorMessage> resourceNotFoundException(ResourceNotFoundException e) {
         ErrorMessage msg = new ErrorMessage(HttpStatus.NOT_FOUND, new Date(),
-                ErrorMessage.Message.USER_NOT_FOUND.getMessage(e.getId().toString()));
+                e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(msg);
     }
 
     @ExceptionHandler(value = ResourceAlreadyExist.class)
     public ResponseEntity<ErrorMessage> resourceAlreadyExist(ResourceAlreadyExist e) {
         ErrorMessage msg = new ErrorMessage(HttpStatus.NOT_FOUND, new Date(),
-                ErrorMessage.Message.USER_ALREADY_EXIST.getMessage(e.getValue()));
+                e.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(msg);
     }
 

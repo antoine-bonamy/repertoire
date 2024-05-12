@@ -21,7 +21,7 @@ public class GlobalExceptionHandlerTest {
 
     @Test
     public void resourceNotFoundExceptionShouldReturn404() {
-        ResourceNotFoundException e = new ResourceNotFoundException(2L);
+        ResourceNotFoundException e = new ResourceNotFoundException("2");
         ResponseEntity<ErrorMessage> result = globalExceptionHandler.resourceNotFoundException(e);
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
     }
