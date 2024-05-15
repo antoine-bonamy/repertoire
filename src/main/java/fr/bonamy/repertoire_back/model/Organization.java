@@ -1,13 +1,28 @@
 package fr.bonamy.repertoire_back.model;
 
+import jakarta.persistence.*;
+
 import java.util.Objects;
 
+@Entity
+@Table(name = "ORGANIZATION")
 public class Organization {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "name")
     private String name;
+
+    @Column(name = "comment")
     private String comment;
+
+    @Column(name = "is_public")
     private Boolean isPublic;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
     public Organization() {
@@ -66,7 +81,8 @@ public class Organization {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Organization that = (Organization) o;
-        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(comment, that.comment) && Objects.equals(isPublic, that.isPublic) && Objects.equals(user, that.user);
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(comment,
+                that.comment) && Objects.equals(isPublic, that.isPublic) && Objects.equals(user, that.user);
     }
 
     @Override
