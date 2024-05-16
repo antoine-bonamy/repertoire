@@ -1,16 +1,38 @@
 package fr.bonamy.repertoire_back.model;
 
+import jakarta.persistence.*;
+
 import java.util.List;
 import java.util.Objects;
 
+@Entity
+@Table(name = "`GROUP`")
 public class Group {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "name")
     private String name;
-    private List<Contact> contactList;
+
+    @Column(name = "comment")
     private String comment;
+
+    @Column(name = "is_public")
     private Boolean isPublic;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
+
+    @ManyToMany
+    @JoinTable(
+            name = "LINK_CONTACT_GROUP",
+            joinColumns = @JoinColumn(name = "group_id"),
+            inverseJoinColumns = @JoinColumn(name = "contact_id"))
+    private List<Contact> contactList;
+
 
     public Group() {
     }
@@ -77,7 +99,9 @@ public class Group {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Group group = (Group) o;
-        return Objects.equals(id, group.id) && Objects.equals(name, group.name) && Objects.equals(contactList, group.contactList) && Objects.equals(comment, group.comment) && Objects.equals(isPublic, group.isPublic) && Objects.equals(user, group.user);
+        return Objects.equals(id, group.id) && Objects.equals(name, group.name) && Objects.equals(contactList,
+                group.contactList) && Objects.equals(comment, group.comment) && Objects.equals(isPublic,
+                group.isPublic) && Objects.equals(user, group.user);
     }
 
     @Override

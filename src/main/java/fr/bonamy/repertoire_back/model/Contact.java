@@ -1,24 +1,52 @@
 package fr.bonamy.repertoire_back.model;
 
+
+import jakarta.persistence.*;
+
 import java.util.Objects;
 
+@Entity
+@Table(name = "CONTACT")
 public class Contact {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "firstname")
     private String firstname;
+
+    @Column(name = "lastname")
     private String lastname;
+
+    @Column(name = "email")
     private String email;
+
+    @Column(name = "phone")
     private String phone;
+
+    @Column(name = "address")
     private String address;
+
+    @Column(name = "comment")
     private String comment;
+
+    @Column(name = "is_public")
     private Boolean isPublic;
+
+    @ManyToOne
+    @JoinColumn(name = "organization_id")
     private Organization organization;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
     public Contact() {
     }
 
-    public Contact(Long id, String firstname, String lastname, String email, String phone, String address, String comment, Boolean isPublic, Organization organization, User user) {
+    public Contact(Long id, String firstname, String lastname, String email, String phone, String address,
+                   String comment, Boolean isPublic, Organization organization, User user) {
         this.id = id;
         this.firstname = firstname;
         this.lastname = lastname;
