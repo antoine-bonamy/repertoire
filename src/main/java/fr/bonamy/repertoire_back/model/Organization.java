@@ -81,8 +81,11 @@ public class Organization {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Organization that = (Organization) o;
-        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(comment,
-                that.comment) && Objects.equals(isPublic, that.isPublic) && Objects.equals(user, that.user);
+        return Objects.equals(id, that.id)
+                && Objects.equals(name, that.name)
+                && Objects.equals(comment, that.comment)
+                && Objects.equals(isPublic, that.isPublic)
+                && Objects.equals(user, that.user);
     }
 
     @Override

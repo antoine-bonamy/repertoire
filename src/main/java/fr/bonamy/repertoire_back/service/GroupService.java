@@ -21,7 +21,6 @@ public class GroupService {
 
     private static final String GROUP_NOT_FOUND = "Group with id:%s not found.";
 
-
     private final GroupRepository groupRepository;
     private final GroupMapper groupMapper;
     private final UserService userService;
@@ -33,15 +32,20 @@ public class GroupService {
         this.userService = userService;
     }
 
+    private Pageable initPageable(String sortBy, String sortOrder, int page, int size) {
+        Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+        return PageRequest.of(page, size, Sort.by(direction, sortBy));
+    }
+
+    public void exist(Long id) {
+        groupRepository.findById(id).
+                orElseThrow(() -> new ResourceNotFoundException(String.format(GROUP_NOT_FOUND, id)));
+    }
 
     public List<GroupFrontDto> getAllGroups() {
         return groupRepository.findAll().stream().map(groupMapper::toDto).collect(Collectors.toList());
     }
 
-    private void exist(Long id) {
-        groupRepository.findById(id).
-                orElseThrow(() -> new ResourceNotFoundException(String.format(GROUP_NOT_FOUND, id)));
-    }
 
     public GroupFrontDto getGroupById(Long id) {
         return groupRepository.findById(id).map(groupMapper::toDto)
@@ -49,26 +53,24 @@ public class GroupService {
     }
 
     public Page<GroupFrontDto> getGroupByName(String keyword, String sortBy, String sortOrder, int page, int size) {
-        Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
-        return groupRepository.findByNameContainingIgnoreCase(keyword, pageable).map(groupMapper::toDto);
-    }
-
-    public Page<GroupFrontDto> searchGroup(String keyword, String sortBy, String sortOrder, int page, int size) {
-        Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
-        return groupRepository.findByNameContainingIgnoreCaseOrCommentContainingIgnoreCase(keyword, keyword, pageable)
+        return groupRepository.findByNameContainingIgnoreCase(keyword, initPageable(sortBy, sortOrder, page, size))
                 .map(groupMapper::toDto);
     }
 
-    public Page<GroupFrontDto> getGroupByIsPublic(Boolean isPublic, String sortBy, String sortOrder, int page,
-                                                  int size) {
-        Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
-        return groupRepository.findByIsPublic(isPublic, pageable).map(groupMapper::toDto);
+    public Page<GroupFrontDto> searchGroup(String keyword, String sortBy, String sortOrder, int page, int size) {
+        return groupRepository.findByNameContainingIgnoreCaseOrCommentContainingIgnoreCase(
+                        keyword, keyword, initPageable(sortBy, sortOrder, page, size))
+                .map(groupMapper::toDto);
+    }
+
+    public Page<GroupFrontDto> getGroupByIsPublic(
+            Boolean isPublic, String sortBy, String sortOrder, int page, int size) {
+        return groupRepository.findByIsPublic(isPublic, initPageable(sortBy, sortOrder, page, size))
+                .map(groupMapper::toDto);
     }
 
     public GroupFrontDto createGroup(GroupFormDto dto) {
+        userService.exist(dto.userId());
         return groupMapper.toDto(groupRepository.save(groupMapper.toEntity(dto)));
     }
 
@@ -95,10 +97,13 @@ public class GroupService {
     }
 
     public void addContact(Long groupId, Long contactId) {
+        exist(groupId);
+        //TODO: ne pas ajouter si la liaison existe deja
         groupRepository.addContact(groupId, contactId);
     }
 
     public void removeContact(Long groupId, Long contactId) {
+        exist(groupId);
         groupRepository.removeContact(groupId, contactId);
     }
 

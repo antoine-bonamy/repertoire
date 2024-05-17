@@ -144,7 +144,16 @@ public class Contact {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Contact contact = (Contact) o;
-        return Objects.equals(id, contact.id) && Objects.equals(firstname, contact.firstname) && Objects.equals(lastname, contact.lastname) && Objects.equals(email, contact.email) && Objects.equals(phone, contact.phone) && Objects.equals(address, contact.address) && Objects.equals(comment, contact.comment) && Objects.equals(isPublic, contact.isPublic) && Objects.equals(organization, contact.organization) && Objects.equals(user, contact.user);
+        return Objects.equals(id, contact.id)
+                && Objects.equals(firstname, contact.firstname)
+                && Objects.equals(lastname, contact.lastname)
+                && Objects.equals(email, contact.email)
+                && Objects.equals(phone, contact.phone)
+                && Objects.equals(address, contact.address)
+                && Objects.equals(comment, contact.comment)
+                && Objects.equals(isPublic, contact.isPublic)
+                && Objects.equals(organization, contact.organization)
+                && Objects.equals(user, contact.user);
     }
 
     @Override

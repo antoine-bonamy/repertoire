@@ -25,7 +25,8 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    public User() {}
+    public User() {
+    }
 
     public User(Long id, String firstname, String lastname, String email, String password) {
         this.id = id;
@@ -74,12 +75,17 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(firstname, user.firstname) && Objects.equals(lastname, user.lastname) && Objects.equals(email, user.email) && Objects.equals(password, user.password);
+        return Objects.equals(id, user.id)
+                && Objects.equals(firstname, user.firstname)
+                && Objects.equals(lastname, user.lastname)
+                && Objects.equals(email, user.email)
+                && Objects.equals(password, user.password);
     }
 
     @Override

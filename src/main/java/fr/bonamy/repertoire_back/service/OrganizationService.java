@@ -36,6 +36,16 @@ public class OrganizationService {
         this.userService = userService;
     }
 
+    private Pageable initPageable(String sortBy, String sortOrder, int page, int size) {
+        Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+        return PageRequest.of(page, size, Sort.by(direction, sortBy));
+    }
+
+    public void exist(Long id) {
+        organizationRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException(String.format(ORGANISATION_NOT_FOUND, id)));
+    }
+
     public List<OrganizationFrontDto> getAllOrganizations() {
         return organizationRepository.findAll().stream()
                 .map(organizationMapper::toDto)
@@ -49,38 +59,33 @@ public class OrganizationService {
 
     public Page<OrganizationFrontDto> getOrganizationByUserFirstNameAndUserLastName(
             String name, String sortBy, String sortOrder, int page, int size) {
-        Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
-        return organizationRepository.findByUserFirstNameAndUserLastName(name, pageable).map(organizationMapper::toDto);
+        return organizationRepository.findByUserFirstNameAndUserLastName(
+                        name, initPageable(sortBy, sortOrder, page, size))
+                .map(organizationMapper::toDto);
     }
 
     public Page<OrganizationFrontDto> findByNameIgnoreCaseAndCommentIgnoreCase(
             String keyword, String sortBy, String sortOrder, int page, int size) {
-        Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
-        return organizationRepository.
-                findByNameContainingIgnoreCaseOrCommentContainingIgnoreCase(keyword, keyword, pageable)
+        return organizationRepository.findByNameContainingIgnoreCaseOrCommentContainingIgnoreCase(
+                        keyword, keyword, initPageable(sortBy, sortOrder, page, size))
                 .map(organizationMapper::toDto);
     }
 
     public Page<OrganizationFrontDto> findByIsPublic(
             Boolean isPublic, String sortBy, String sortOrder, int page, int size) {
-        Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
-        return organizationRepository.findByIsPublic(isPublic, pageable)
+        return organizationRepository.findByIsPublic(isPublic, initPageable(sortBy, sortOrder, page, size))
                 .map(organizationMapper::toDto);
     }
 
     public OrganizationFrontDto createOrganization(OrganizationFormDto dto) {
-        userService.getUserById(dto.userId());
+        userService.exist(dto.userId());
         Organization organization = organizationMapper.toEntity(dto);
         //TODO: Verifier l'existence de l'organisation
         return organizationMapper.toDto(organizationRepository.save(organization));
     }
 
     public OrganizationFrontDto updateUser(Long id, OrganizationFormDto dto) {
-        organizationRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException(String.format(ORGANISATION_NOT_FOUND, id)));
+        exist(id);
         userService.getUserById(dto.userId());
         Organization newOrganization = organizationMapper.toEntity(dto);
         newOrganization.setId(id);
@@ -96,7 +101,8 @@ public class OrganizationService {
     }
 
     public boolean deleteOrganization(Long id) {
-        organizationRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(String.format(ORGANISATION_NOT_FOUND, id)));
+        organizationRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException(String.format(ORGANISATION_NOT_FOUND, id)));
         organizationRepository.deleteById(id);
         return true;
     }

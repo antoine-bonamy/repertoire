@@ -12,7 +12,6 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,9 +29,18 @@ public class UserService {
         this.userMapper = userMapper;
     }
 
+    private Pageable initPageable(String sortBy, String sortOrder, int page, int size) {
+        Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+        return PageRequest.of(page, size, Sort.by(direction, sortBy));
+    }
+
+    public void exist(Long id) {
+        userRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException(String.format(USER_NOT_FOUND, id)));
+    }
+
     public UserFrontDto getUserById(Long id) {
-        Optional<User> userOptional = userRepository.findById(id);
-        return userOptional.map(userMapper::toDto).orElseThrow(
+        return userRepository.findById(id).map(userMapper::toDto).orElseThrow(
                 () -> new ResourceNotFoundException(String.format(USER_NOT_FOUND, id)));
     }
 
@@ -43,11 +51,9 @@ public class UserService {
     }
 
     public Page<UserFrontDto> searchUsers(String keyword, String sortBy, String sortOrder, int page, int size) {
-        Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
         return userRepository.
                 findByFirstnameContainingIgnoreCaseOrLastnameContainingIgnoreCaseOrEmailContainingIgnoreCase(
-                        keyword, keyword, keyword, pageable).map(userMapper::toDto);
+                        keyword, keyword, keyword, initPageable(sortBy, sortOrder, page, size)).map(userMapper::toDto);
     }
 
     public UserFrontDto createUser(UserFormDto userDTO) {
@@ -62,7 +68,7 @@ public class UserService {
     }
 
     public UserFrontDto updateUser(Long id, UserFormDto userDTO) {
-        userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(String.format(USER_NOT_FOUND, id)));
+        exist(id);
         User newUser = userMapper.toEntity(userDTO);
         newUser.setId(id);
         userRepository.save(newUser);
@@ -70,7 +76,7 @@ public class UserService {
     }
 
     public boolean deleteUser(Long id) {
-        userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(String.format(USER_NOT_FOUND, id)));
+        exist(id);
         userRepository.deleteById(id);
         return true;
     }

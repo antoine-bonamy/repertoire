@@ -99,9 +99,12 @@ public class Group {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Group group = (Group) o;
-        return Objects.equals(id, group.id) && Objects.equals(name, group.name) && Objects.equals(contactList,
-                group.contactList) && Objects.equals(comment, group.comment) && Objects.equals(isPublic,
-                group.isPublic) && Objects.equals(user, group.user);
+        return Objects.equals(id, group.id)
+                && Objects.equals(name, group.name)
+                && Objects.equals(contactList, group.contactList)
+                && Objects.equals(comment, group.comment)
+                && Objects.equals(isPublic, group.isPublic)
+                && Objects.equals(user, group.user);
     }
 
     @Override
