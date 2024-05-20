@@ -3,7 +3,6 @@ package fr.bonamy.repertoire_back.service;
 import fr.bonamy.repertoire_back.dto.front.GroupFormDto;
 import fr.bonamy.repertoire_back.dto.front.GroupFrontDto;
 import fr.bonamy.repertoire_back.exception.ResourceNotFoundException;
-import fr.bonamy.repertoire_back.mapper.ContactMapper;
 import fr.bonamy.repertoire_back.mapper.GroupMapper;
 import fr.bonamy.repertoire_back.model.Group;
 import fr.bonamy.repertoire_back.repository.GroupRepository;
@@ -26,15 +25,11 @@ public class GroupService {
     private final GroupMapper groupMapper;
     private final UserService userService;
 
-    private final ContactMapper contactMapper;
-
     @Autowired
-    public GroupService(GroupRepository groupRepository, GroupMapper groupMapper, UserService userService,
-                        ContactMapper contactMapper) {
+    public GroupService(GroupRepository groupRepository, GroupMapper groupMapper, UserService userService) {
         this.groupRepository = groupRepository;
         this.groupMapper = groupMapper;
         this.userService = userService;
-        this.contactMapper = contactMapper;
     }
 
     private Pageable initPageable(String sortBy, String sortOrder, int page, int size) {
