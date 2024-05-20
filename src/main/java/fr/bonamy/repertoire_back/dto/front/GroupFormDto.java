@@ -15,6 +15,6 @@ public record GroupFormDto(
         Boolean isPublic,
 
         @NotNull(message = "UserId cannot be null")
-        Long userId
+        UserIdDTO user
 ) {
 }

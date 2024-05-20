@@ -15,7 +15,7 @@ public record OrganizationFormDto(
         @NotNull(message = "IsPublic cannot be null")
         Boolean isPublic,
 
-        @NotNull(message = "UserId cannot be null")
-        Long userId) {
+        @NotNull(message = "User cannot be null")
+        UserIdDTO user) {
 
 }

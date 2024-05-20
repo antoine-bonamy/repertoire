@@ -5,10 +5,5 @@ public record OrganizationFrontDto(
         String name,
         String comment,
         Boolean isPublic,
-        UserOrganizationDto user) {
-    public record UserOrganizationDto(
-            Long id,
-            String firstname,
-            String lastname) {
-    }
+        UserFrontDto user) {
 }
