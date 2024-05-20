@@ -31,7 +31,7 @@ public class Group {
             name = "LINK_CONTACT_GROUP",
             joinColumns = @JoinColumn(name = "group_id"),
             inverseJoinColumns = @JoinColumn(name = "contact_id"))
-    private List<Contact> contactList;
+    private List<Contact> contacts;
 
 
     public Group() {
@@ -40,7 +40,7 @@ public class Group {
     public Group(Long id, String name, List<Contact> contactList, String comment, Boolean isPublic, User user) {
         this.id = id;
         this.name = name;
-        this.contactList = contactList;
+        this.contacts = contactList;
         this.comment = comment;
         this.isPublic = isPublic;
         this.user = user;
@@ -62,12 +62,12 @@ public class Group {
         this.name = name;
     }
 
-    public List<Contact> getContactList() {
-        return contactList;
+    public List<Contact> getContacts() {
+        return contacts;
     }
 
-    public void setContactList(List<Contact> contactList) {
-        this.contactList = contactList;
+    public void setContacts(List<Contact> contactList) {
+        this.contacts = contactList;
     }
 
     public String getComment() {
@@ -101,7 +101,7 @@ public class Group {
         Group group = (Group) o;
         return Objects.equals(id, group.id)
                 && Objects.equals(name, group.name)
-                && Objects.equals(contactList, group.contactList)
+                && Objects.equals(contacts, group.contacts)
                 && Objects.equals(comment, group.comment)
                 && Objects.equals(isPublic, group.isPublic)
                 && Objects.equals(user, group.user);
@@ -109,7 +109,7 @@ public class Group {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, contactList, comment, isPublic, user);
+        return Objects.hash(id, name, contacts, comment, isPublic, user);
     }
 
     @Override
@@ -117,7 +117,7 @@ public class Group {
         return "Group{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", contactList=" + contactList +
+                ", contactList=" + contacts +
                 ", comment='" + comment + '\'' +
                 ", isPublic=" + isPublic +
                 ", user=" + user +

@@ -9,22 +9,8 @@ public record ContactFrontDto(
         String address,
         String comment,
         Boolean isPublic,
-        ContactOrganizationFrontDto organizationFrontDto,
-        ContactUserFrontDto userFrontDto
+        OrganizationFrontDto organization,
+        UserFrontDto user
 
 ) {
-
-    public record ContactOrganizationFrontDto(
-            Long id,
-            String name
-    ) {
-    }
-
-    public record ContactUserFrontDto(
-            Long id,
-            String firstname,
-            String lastname
-    ) {
-    }
-
 }

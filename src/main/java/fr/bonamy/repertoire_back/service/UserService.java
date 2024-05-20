@@ -40,20 +40,21 @@ public class UserService {
     }
 
     public UserFrontDto getUserById(Long id) {
-        return userRepository.findById(id).map(userMapper::toDto).orElseThrow(
+        return userRepository.findById(id).map(user -> userMapper.toDto(user, UserFrontDto.class)).orElseThrow(
                 () -> new ResourceNotFoundException(String.format(USER_NOT_FOUND, id)));
     }
 
     public List<UserFrontDto> getAllUsers() {
         return userRepository.findAll().stream()
-                .map(userMapper::toDto)
+                .map(user -> userMapper.toDto(user, UserFrontDto.class))
                 .collect(Collectors.toList());
     }
 
     public Page<UserFrontDto> searchUsers(String keyword, String sortBy, String sortOrder, int page, int size) {
         return userRepository.
                 findByFirstnameContainingIgnoreCaseOrLastnameContainingIgnoreCaseOrEmailContainingIgnoreCase(
-                        keyword, keyword, keyword, initPageable(sortBy, sortOrder, page, size)).map(userMapper::toDto);
+                        keyword, keyword, keyword, initPageable(sortBy, sortOrder, page, size))
+                .map(user -> userMapper.toDto(user, UserFrontDto.class));
     }
 
     public UserFrontDto createUser(UserFormDto userDTO) {
@@ -64,7 +65,7 @@ public class UserService {
             throw new ResourceAlreadyExist(String.format(USER_ALREADY_EXIST, user.getEmail()));
         }
         user = userRepository.save(user);
-        return userMapper.toDto(user);
+        return userMapper.toDto(user, UserFrontDto.class);
     }
 
     public UserFrontDto updateUser(Long id, UserFormDto userDTO) {
@@ -72,7 +73,7 @@ public class UserService {
         User newUser = userMapper.toEntity(userDTO);
         newUser.setId(id);
         userRepository.save(newUser);
-        return userMapper.toDto(newUser);
+        return userMapper.toDto(newUser, UserFrontDto.class);
     }
 
     public boolean deleteUser(Long id) {

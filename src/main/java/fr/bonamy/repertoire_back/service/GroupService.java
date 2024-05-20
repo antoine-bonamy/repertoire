@@ -3,6 +3,7 @@ package fr.bonamy.repertoire_back.service;
 import fr.bonamy.repertoire_back.dto.front.GroupFormDto;
 import fr.bonamy.repertoire_back.dto.front.GroupFrontDto;
 import fr.bonamy.repertoire_back.exception.ResourceNotFoundException;
+import fr.bonamy.repertoire_back.mapper.ContactMapper;
 import fr.bonamy.repertoire_back.mapper.GroupMapper;
 import fr.bonamy.repertoire_back.model.Group;
 import fr.bonamy.repertoire_back.repository.GroupRepository;
@@ -25,11 +26,15 @@ public class GroupService {
     private final GroupMapper groupMapper;
     private final UserService userService;
 
+    private final ContactMapper contactMapper;
+
     @Autowired
-    public GroupService(GroupRepository groupRepository, GroupMapper groupMapper, UserService userService) {
+    public GroupService(GroupRepository groupRepository, GroupMapper groupMapper, UserService userService,
+                        ContactMapper contactMapper) {
         this.groupRepository = groupRepository;
         this.groupMapper = groupMapper;
         this.userService = userService;
+        this.contactMapper = contactMapper;
     }
 
     private Pageable initPageable(String sortBy, String sortOrder, int page, int size) {
@@ -43,43 +48,45 @@ public class GroupService {
     }
 
     public List<GroupFrontDto> getAllGroups() {
-        return groupRepository.findAll().stream().map(groupMapper::toDto).collect(Collectors.toList());
+        return groupRepository.findAll().stream().map(x -> groupMapper.toDto(x, GroupFrontDto.class))
+                .collect(Collectors.toList());
     }
 
 
     public GroupFrontDto getGroupById(Long id) {
-        return groupRepository.findById(id).map(groupMapper::toDto)
+        return groupRepository.findById(id).map(x -> groupMapper.toDto(x, GroupFrontDto.class))
                 .orElseThrow(() -> new ResourceNotFoundException(String.format(GROUP_NOT_FOUND, id)));
     }
 
     public Page<GroupFrontDto> getGroupByName(String keyword, String sortBy, String sortOrder, int page, int size) {
         return groupRepository.findByNameContainingIgnoreCase(keyword, initPageable(sortBy, sortOrder, page, size))
-                .map(groupMapper::toDto);
+                .map(x -> groupMapper.toDto(x, GroupFrontDto.class));
     }
 
     public Page<GroupFrontDto> searchGroup(String keyword, String sortBy, String sortOrder, int page, int size) {
         return groupRepository.findByNameContainingIgnoreCaseOrCommentContainingIgnoreCase(
                         keyword, keyword, initPageable(sortBy, sortOrder, page, size))
-                .map(groupMapper::toDto);
+                .map(x -> groupMapper.toDto(x, GroupFrontDto.class));
     }
 
     public Page<GroupFrontDto> getGroupByIsPublic(
             Boolean isPublic, String sortBy, String sortOrder, int page, int size) {
         return groupRepository.findByIsPublic(isPublic, initPageable(sortBy, sortOrder, page, size))
-                .map(groupMapper::toDto);
+                .map(x -> groupMapper.toDto(x, GroupFrontDto.class));
     }
 
     public GroupFrontDto createGroup(GroupFormDto dto) {
-        userService.exist(dto.userId());
-        return groupMapper.toDto(groupRepository.save(groupMapper.toEntity(dto)));
+        System.out.println(dto.user());
+        userService.exist(dto.user().id());
+        return groupMapper.toDto(groupRepository.save(groupMapper.toEntity(dto)), GroupFrontDto.class);
     }
 
     public GroupFrontDto updateGroup(Long id, GroupFormDto dto) {
         exist(id);
-        userService.getUserById(dto.userId());
+        userService.getUserById(dto.user().id());
         Group newGroup = groupMapper.toEntity(dto);
         newGroup.setId(id);
-        return groupMapper.toDto(groupRepository.save(newGroup));
+        return groupMapper.toDto(groupRepository.save(newGroup), GroupFrontDto.class);
     }
 
     public GroupFrontDto updateIsPublic(Long id, Boolean isPublic) {
@@ -87,7 +94,7 @@ public class GroupService {
                 () -> new ResourceNotFoundException(String.format(GROUP_NOT_FOUND, id)));
         groupRepository.updateIsPublic(id, isPublic);
         group.setPublic(isPublic);
-        return groupMapper.toDto(group);
+        return groupMapper.toDto(group, GroupFrontDto.class);
     }
 
     public Boolean deleteGroup(Long id) {

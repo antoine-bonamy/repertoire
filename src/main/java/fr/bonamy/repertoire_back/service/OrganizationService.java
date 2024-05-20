@@ -48,48 +48,48 @@ public class OrganizationService {
 
     public List<OrganizationFrontDto> getAllOrganizations() {
         return organizationRepository.findAll().stream()
-                .map(organizationMapper::toDto)
+                .map(x -> organizationMapper.toDto(x, OrganizationFrontDto.class))
                 .collect(Collectors.toList());
     }
 
     public OrganizationFrontDto getOrganizationById(Long id) {
-        return organizationRepository.findById(id).map(organizationMapper::toDto).orElseThrow(
-                () -> new ResourceNotFoundException(String.format(ORGANISATION_NOT_FOUND, id)));
+        return organizationRepository.findById(id).map(x -> organizationMapper.toDto(x, OrganizationFrontDto.class))
+                .orElseThrow(() -> new ResourceNotFoundException(String.format(ORGANISATION_NOT_FOUND, id)));
     }
 
     public Page<OrganizationFrontDto> getOrganizationByUserFirstNameAndUserLastName(
             String name, String sortBy, String sortOrder, int page, int size) {
         return organizationRepository.findByUserFirstNameAndUserLastName(
                         name, initPageable(sortBy, sortOrder, page, size))
-                .map(organizationMapper::toDto);
+                .map(x -> organizationMapper.toDto(x, OrganizationFrontDto.class));
     }
 
     public Page<OrganizationFrontDto> findByNameIgnoreCaseAndCommentIgnoreCase(
             String keyword, String sortBy, String sortOrder, int page, int size) {
         return organizationRepository.findByNameContainingIgnoreCaseOrCommentContainingIgnoreCase(
                         keyword, keyword, initPageable(sortBy, sortOrder, page, size))
-                .map(organizationMapper::toDto);
+                .map(x -> organizationMapper.toDto(x, OrganizationFrontDto.class));
     }
 
     public Page<OrganizationFrontDto> findByIsPublic(
             Boolean isPublic, String sortBy, String sortOrder, int page, int size) {
         return organizationRepository.findByIsPublic(isPublic, initPageable(sortBy, sortOrder, page, size))
-                .map(organizationMapper::toDto);
+                .map(x -> organizationMapper.toDto(x, OrganizationFrontDto.class));
     }
 
     public OrganizationFrontDto createOrganization(OrganizationFormDto dto) {
-        userService.exist(dto.userId());
+        userService.exist(dto.user().id());
         Organization organization = organizationMapper.toEntity(dto);
         //TODO: Verifier l'existence de l'organisation
-        return organizationMapper.toDto(organizationRepository.save(organization));
+        return organizationMapper.toDto(organizationRepository.save(organization), OrganizationFrontDto.class);
     }
 
     public OrganizationFrontDto updateUser(Long id, OrganizationFormDto dto) {
         exist(id);
-        userService.getUserById(dto.userId());
+        userService.getUserById(dto.user().id());
         Organization newOrganization = organizationMapper.toEntity(dto);
         newOrganization.setId(id);
-        return organizationMapper.toDto(organizationRepository.save(newOrganization));
+        return organizationMapper.toDto(organizationRepository.save(newOrganization), OrganizationFrontDto.class);
     }
 
     public OrganizationFrontDto updateIsPublic(Long id, Boolean isPublic) {
@@ -97,7 +97,7 @@ public class OrganizationService {
                 () -> new ResourceNotFoundException(String.format(ORGANISATION_NOT_FOUND, id)));
         organizationRepository.updateIsPublic(id, isPublic);
         organization.setPublic(isPublic);
-        return organizationMapper.toDto(organization);
+        return organizationMapper.toDto(organization, OrganizationFrontDto.class);
     }
 
     public boolean deleteOrganization(Long id) {
