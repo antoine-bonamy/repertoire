@@ -43,11 +43,12 @@ public class UserControllerTest {
         ResponseEntity<List<UserFrontDto>> result = controller.getAllUsers();
         assertEquals(HttpStatus.OK, result.getStatusCode());
     }
+
     @Test
     public void getAllUsers_shouldReturnListOfUser_whenUsersExists() {
-        UserFrontDto user1 = new UserFrontDto("1", "Jean", "Martin", "jean.martin@mail.com");
-        UserFrontDto user2 = new UserFrontDto("2", "Jean", "Claude", "jean.martin@mail.com");
-        UserFrontDto user3 = new UserFrontDto("3", "Claude", "Martin", "jean.martin@mail.com");
+        UserFrontDto user1 = new UserFrontDto(1L, "Jean", "Martin", "jean.martin@mail.com");
+        UserFrontDto user2 = new UserFrontDto(2L, "Jean", "Claude", "jean.martin@mail.com");
+        UserFrontDto user3 = new UserFrontDto(3L, "Claude", "Martin", "jean.martin@mail.com");
         List<UserFrontDto> users = new ArrayList<>(List.of(user1, user2, user3));
         when(service.getAllUsers()).thenReturn(users);
         List<UserFrontDto> result = controller.getAllUsers().getBody();
@@ -69,7 +70,7 @@ public class UserControllerTest {
 
     @Test
     public void getUserById_shouldReturn200_whenUserExist() {
-        UserFrontDto user = new UserFrontDto("1", "Jean", "Martin", "jean.martin@mail.com");
+        UserFrontDto user = new UserFrontDto(1L, "Jean", "Martin", "jean.martin@mail.com");
         when(service.getUserById(1L)).thenReturn(user);
         ResponseEntity<UserFrontDto> result = controller.getUserById(1L);
         assertEquals(HttpStatus.OK, result.getStatusCode());
@@ -77,7 +78,7 @@ public class UserControllerTest {
 
     @Test
     public void getUserById_shouldReturnCorrespondingUser_whenUserExist() {
-        UserFrontDto user = new UserFrontDto("1", "Jean", "Martin", "jean.martin@mail.com");
+        UserFrontDto user = new UserFrontDto(1L, "Jean", "Martin", "jean.martin@mail.com");
         when(service.getUserById(1L)).thenReturn(user);
         ResponseEntity<UserFrontDto> result = controller.getUserById(1L);
         assertEquals(user, result.getBody());
@@ -87,8 +88,8 @@ public class UserControllerTest {
     public void searchUsers_shouldReturn200_whenAPageIsReturned() {
 
         List<UserFrontDto> userFrontDtos = List.of(
-                new UserFrontDto("1", "John", "Doe", "john@example.com"),
-                new UserFrontDto("2", "Jane", "Doe", "jane@example.com")
+                new UserFrontDto(1L, "John", "Doe", "john@example.com"),
+                new UserFrontDto(2L, "Jane", "Doe", "jane@example.com")
         );
         Page<UserFrontDto> page = new PageImpl<>(userFrontDtos);
 
@@ -101,8 +102,8 @@ public class UserControllerTest {
     public void searchUsers_shouldReturnAPageOfUsers_whenAListIsReturned() {
 
         List<UserFrontDto> userFrontDtos = List.of(
-                new UserFrontDto("1", "John", "Doe", "john@example.com"),
-                new UserFrontDto("2", "Jane", "Doe", "jane@example.com")
+                new UserFrontDto(1L, "John", "Doe", "john@example.com"),
+                new UserFrontDto(2L, "Jane", "Doe", "jane@example.com")
         );
         Page<UserFrontDto> page = new PageImpl<>(userFrontDtos);
 
@@ -117,7 +118,7 @@ public class UserControllerTest {
     @Test
     public void createUser_shouldReturn201_whenUserIsCreated() {
         UserFormDto userFormDto = new UserFormDto("Jean", "Martin", "jean.martin@mail.com", "password");
-        UserFrontDto userFrontDto = new UserFrontDto("1", "Jean", "Martin", "jean.martin@mail.com");
+        UserFrontDto userFrontDto = new UserFrontDto(1L, "Jean", "Martin", "jean.martin@mail.com");
         when(service.createUser(userFormDto)).thenReturn(userFrontDto);
         ResponseEntity<UserFrontDto> result = controller.createUser(userFormDto);
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
@@ -126,7 +127,7 @@ public class UserControllerTest {
     @Test
     public void createUser_shouldReturnCreatedUser_whenUserIsCreated() {
         UserFormDto userFormDto = new UserFormDto("Jean", "Martin", "jean.martin@mail.com", "password");
-        UserFrontDto userFrontDto = new UserFrontDto("1", "Jean", "Martin", "jean.martin@mail.com");
+        UserFrontDto userFrontDto = new UserFrontDto(1L, "Jean", "Martin", "jean.martin@mail.com");
         when(service.createUser(userFormDto)).thenReturn(userFrontDto);
         ResponseEntity<UserFrontDto> result = controller.createUser(userFormDto);
         assertEquals(userFrontDto, result.getBody());
@@ -135,7 +136,7 @@ public class UserControllerTest {
     @Test
     public void updateUser_shouldReturn201_whenUserIsUpdated() {
         UserFormDto userFormDto = new UserFormDto("Jean", "Martin", "jean.martin@mail.com", "password");
-        UserFrontDto userFrontDto = new UserFrontDto("1", "Jean", "Martin", "jean.martin@mail.com");
+        UserFrontDto userFrontDto = new UserFrontDto(1L, "Jean", "Martin", "jean.martin@mail.com");
         when(service.updateUser(1L, userFormDto)).thenReturn(userFrontDto);
         ResponseEntity<UserFrontDto> result = controller.updateUser(1L, userFormDto);
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
@@ -144,7 +145,7 @@ public class UserControllerTest {
     @Test
     public void updateUser_shouldReturnUpdatedUser_whenUserIsUpdated() {
         UserFormDto userFormDto = new UserFormDto("Jean", "Martin", "jean.martin@mail.com", "password");
-        UserFrontDto userFrontDto = new UserFrontDto("1", "Jean", "Martin", "jean.martin@mail.com");
+        UserFrontDto userFrontDto = new UserFrontDto(1L, "Jean", "Martin", "jean.martin@mail.com");
         when(service.updateUser(1L, userFormDto)).thenReturn(userFrontDto);
         ResponseEntity<UserFrontDto> result = controller.updateUser(1L, userFormDto);
         assertEquals(userFrontDto, result.getBody());
