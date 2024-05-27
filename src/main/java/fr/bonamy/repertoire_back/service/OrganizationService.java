@@ -86,7 +86,7 @@ public class OrganizationService {
 
     public OrganizationFrontDto updateUser(Long id, OrganizationFormDto dto) {
         exist(id);
-        userService.getUserById(dto.user().id());
+        userService.exist(dto.user().id());
         Organization newOrganization = organizationMapper.toEntity(dto);
         newOrganization.setId(id);
         return organizationMapper.toDto(organizationRepository.save(newOrganization), OrganizationFrontDto.class);

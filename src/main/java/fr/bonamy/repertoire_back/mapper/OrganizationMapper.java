@@ -30,7 +30,7 @@ public class OrganizationMapper {
         try {
             List<Object> constructorArgs = new ArrayList<>();
             for (Field field : dtoClass.getDeclaredFields()) {
-                if (field.getName().equals("user")) {
+                if (field.getName().equals("user") && organization.getUser() != null) {
                     Class<?> userDtoClass = Arrays.stream(dtoClass.getRecordComponents()).
                             filter(x -> x.getName().contains("user")).findFirst().get().getType();
                     constructorArgs.add(userMapper.toDto(organization.getUser(), userDtoClass));
