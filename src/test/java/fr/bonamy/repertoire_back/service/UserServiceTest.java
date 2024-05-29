@@ -1,7 +1,7 @@
 package fr.bonamy.repertoire_back.service;
 
-import fr.bonamy.repertoire_back.dto.front.UserFormDto;
-import fr.bonamy.repertoire_back.dto.front.UserFrontDto;
+import fr.bonamy.repertoire_back.dto.front.User.UserDetailDTO;
+import fr.bonamy.repertoire_back.dto.front.User.UserFormDTO;
 import fr.bonamy.repertoire_back.exception.ResourceAlreadyExist;
 import fr.bonamy.repertoire_back.exception.ResourceNotFoundException;
 import fr.bonamy.repertoire_back.mapper.UserMapper;
@@ -35,11 +35,11 @@ public class UserServiceTest {
 
     @Test
     public void getUserById_shouldReturnCorrespondingUser_whenUserExist() {
-        UserFrontDto expectedReturn = new UserFrontDto(1L, "Jean", "Martin", "jean.martin@mail.com");
+        UserDetailDTO expectedReturn = new UserDetailDTO(1L, "Jean", "Martin", "jean.martin@mail.com");
         User user = new User(1L, "Jean", "Martin", "jean.martin@mail.com", "password");
         when(repository.findById(1L)).thenReturn(Optional.of(user));
-        when(mapper.toDto(user, UserFrontDto.class)).thenReturn(expectedReturn);
-        UserFrontDto result = service.getUserById(1L);
+        when(mapper.toDto(user, UserDetailDTO.class)).thenReturn(expectedReturn);
+        UserDetailDTO result = service.getUserById(1L);
         assertEquals(expectedReturn, result);
     }
 
@@ -54,7 +54,7 @@ public class UserServiceTest {
     @Test
     public void getAllUsers_shouldReturnAnEmptyListOfUserDto_whenNoUserExists() {
         when(repository.findAll()).thenReturn(List.of());
-        List<UserFrontDto> result = service.getAllUsers();
+        List<UserDetailDTO> result = service.getAllUsers();
         assertTrue(result.isEmpty());
     }
 
@@ -64,15 +64,15 @@ public class UserServiceTest {
         User user2 = new User(2L, "Jean", "Claude", "jean.martin@mail.com", "pass");
         User user3 = new User(3L, "Claude", "Martin", "jean.martin@mail.com", "pass");
         List<User> users = new ArrayList<>(List.of(user1, user2, user3));
-        UserFrontDto userDto1 = new UserFrontDto(1L, "Jean", "Martin", "jean.martin@mail.com");
-        UserFrontDto userDto2 = new UserFrontDto(2L, "Jean", "Claude", "jean.martin@mail.com");
-        UserFrontDto userDto3 = new UserFrontDto(3L, "Claude", "Martin", "jean.martin@mail.com");
-        List<UserFrontDto> userDtos = new ArrayList<>(List.of(userDto1, userDto2, userDto3));
+        UserDetailDTO userDto1 = new UserDetailDTO(1L, "Jean", "Martin", "jean.martin@mail.com");
+        UserDetailDTO userDto2 = new UserDetailDTO(2L, "Jean", "Claude", "jean.martin@mail.com");
+        UserDetailDTO userDto3 = new UserDetailDTO(3L, "Claude", "Martin", "jean.martin@mail.com");
+        List<UserDetailDTO> userDtos = new ArrayList<>(List.of(userDto1, userDto2, userDto3));
         when(repository.findAll()).thenReturn(users);
-        when(mapper.toDto(user1, UserFrontDto.class)).thenReturn(userDto1);
-        when(mapper.toDto(user2, UserFrontDto.class)).thenReturn(userDto2);
-        when(mapper.toDto(user3, UserFrontDto.class)).thenReturn(userDto3);
-        List<UserFrontDto> result = service.getAllUsers();
+        when(mapper.toDto(user1, UserDetailDTO.class)).thenReturn(userDto1);
+        when(mapper.toDto(user2, UserDetailDTO.class)).thenReturn(userDto2);
+        when(mapper.toDto(user3, UserDetailDTO.class)).thenReturn(userDto3);
+        List<UserDetailDTO> result = service.getAllUsers();
         assert result != null;
         if (userDtos.size() != result.size()) fail();
         boolean equal = false;
@@ -93,13 +93,13 @@ public class UserServiceTest {
                 "Doe", "Doe", "Doe", PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "id"))))
                 .thenReturn(page);
 
-        List<UserFrontDto> userFrontDtos = List.of(
-                new UserFrontDto(1L, "John", "Doe", "john@example.com"),
-                new UserFrontDto(2L, "Jane", "Doe", "jane@example.com")
+        List<UserDetailDTO> userFrontDtos = List.of(
+                new UserDetailDTO(1L, "John", "Doe", "john@example.com"),
+                new UserDetailDTO(2L, "Jane", "Doe", "jane@example.com")
         );
-        when(mapper.toDto(users.get(0), UserFrontDto.class)).thenReturn(userFrontDtos.get(0));
-        when(mapper.toDto(users.get(1), UserFrontDto.class)).thenReturn(userFrontDtos.get(1));
-        Page<UserFrontDto> result = service.searchUsers("Doe", "id", "asc", 0, 10);
+        when(mapper.toDto(users.get(0), UserDetailDTO.class)).thenReturn(userFrontDtos.get(0));
+        when(mapper.toDto(users.get(1), UserDetailDTO.class)).thenReturn(userFrontDtos.get(1));
+        Page<UserDetailDTO> result = service.searchUsers("Doe", "id", "asc", 0, 10);
         assertNotNull(result);
         assertEquals(2, result.getTotalElements());
         assertEquals(userFrontDtos.get(0), result.getContent().get(0));
@@ -108,19 +108,19 @@ public class UserServiceTest {
 
     @Test
     public void createUser_shouldReturnCreatedUser_whenUserIsCreated() {
-        UserFormDto userFormDto = new UserFormDto("Jean", "Martin", "jean.martin@mail.com", "password");
-        UserFrontDto userFrontDto = new UserFrontDto(1L, "Jean", "Martin", "jean.martin@mail.com");
+        UserFormDTO userFormDto = new UserFormDTO("Jean", "Martin", "jean.martin@mail.com", "password");
+        UserDetailDTO userFrontDto = new UserDetailDTO(1L, "Jean", "Martin", "jean.martin@mail.com");
         User user = new User(1L, "Jean", "Martin", "jean.martin@mail.com", "password");
         when(repository.save(user)).thenReturn(user);
         when(mapper.toEntity(userFormDto)).thenReturn(user);
-        when(mapper.toDto(user, UserFrontDto.class)).thenReturn(userFrontDto);
-        UserFrontDto result = service.createUser(userFormDto);
+        when(mapper.toDto(user, UserDetailDTO.class)).thenReturn(userFrontDto);
+        UserDetailDTO result = service.createUser(userFormDto);
         assertEquals(userFrontDto, result);
     }
 
     @Test
     public void createUser_shouldThrowResourceAlreadyExist_whenUserAlreadyExist() {
-        UserFormDto userFormDto = new UserFormDto("Jean", "Martin", "jean.martin@mail.com", "password");
+        UserFormDTO userFormDto = new UserFormDTO("Jean", "Martin", "jean.martin@mail.com", "password");
         User user = new User();
         user.setEmail("email");
         when(repository.exists(Example.of(user))).thenReturn(true);
@@ -130,21 +130,21 @@ public class UserServiceTest {
 
     @Test
     public void updateUser_shouldReturnUpdatedUser_whenUserIsUpdated() {
-        UserFormDto userFormDto = new UserFormDto("Jean", "Martin", "jean.martin@mail.com", "password");
-        UserFrontDto userFrontDto = new UserFrontDto(1L, "Louis", "Martin", "jean.martin@mail.com");
+        UserFormDTO userFormDto = new UserFormDTO("Jean", "Martin", "jean.martin@mail.com", "password");
+        UserDetailDTO userFrontDto = new UserDetailDTO(1L, "Louis", "Martin", "jean.martin@mail.com");
         User user = new User(1L, "Jean", "Martin", "jean.martin@mail.com", "password");
 
         when(repository.findById(1L)).thenReturn(Optional.of(user));
         when(mapper.toEntity(userFormDto)).thenReturn(user);
-        when(mapper.toDto(user, UserFrontDto.class)).thenReturn(userFrontDto);
+        when(mapper.toDto(user, UserDetailDTO.class)).thenReturn(userFrontDto);
 
-        UserFrontDto result = service.updateUser(1L, userFormDto);
+        UserDetailDTO result = service.updateUser(1L, userFormDto);
         assertEquals(userFrontDto, result);
     }
 
     @Test
     public void updateUser_shouldResourceNotFoundException_whenUserDoesntExist() {
-        UserFormDto userFormDto = new UserFormDto("Jean", "Martin", "jean.martin@mail.com", "password");
+        UserFormDTO userFormDto = new UserFormDTO("Jean", "Martin", "jean.martin@mail.com", "password");
         when(repository.findById(1L)).thenReturn(Optional.empty());
         assertThrows(ResourceNotFoundException.class, () -> service.updateUser(1L, userFormDto));
     }

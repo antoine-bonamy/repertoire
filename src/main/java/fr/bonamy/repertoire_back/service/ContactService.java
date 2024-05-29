@@ -1,7 +1,8 @@
 package fr.bonamy.repertoire_back.service;
 
-import fr.bonamy.repertoire_back.dto.front.ContactFormDto;
-import fr.bonamy.repertoire_back.dto.front.ContactFrontDto;
+import fr.bonamy.repertoire_back.dto.front.Contact.ContactDetailDTO;
+import fr.bonamy.repertoire_back.dto.front.Contact.ContactFormDTO;
+import fr.bonamy.repertoire_back.dto.front.Contact.ContactMinimalDTO;
 import fr.bonamy.repertoire_back.exception.ResourceNotFoundException;
 import fr.bonamy.repertoire_back.mapper.ContactMapper;
 import fr.bonamy.repertoire_back.model.Contact;
@@ -18,6 +19,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class ContactService {
+
+    //TODO: Les fonction de recherches ne doivent renvoyer que des résultat dont le champs "isPublic" vaut TRUE.
+    //TODO: Ajouter une fonction de rehcerche tenant en tenant compte de userId.
 
     private static final String CONTACT_NOT_FOUND = "Contact with id:%s not found.";
 
@@ -47,58 +51,58 @@ public class ContactService {
                 .orElseThrow(() -> new ResourceNotFoundException(String.format(CONTACT_NOT_FOUND, id)));
     }
 
-    public List<ContactFrontDto> getAllContacts() {
-        return contactRepository.findAll().stream().map(x -> contactMapper.toDto(x, ContactFrontDto.class))
+    public List<ContactDetailDTO> getAllContacts() {
+        return contactRepository.findAll().stream().map(x -> contactMapper.toDto(x, ContactDetailDTO.class))
                 .collect(Collectors.toList());
     }
 
-    public ContactFrontDto getContactById(Long id) {
-        return contactRepository.findById(id).map(x -> contactMapper.toDto(x, ContactFrontDto.class))
+    public ContactDetailDTO getContactById(Long id) {
+        return contactRepository.findById(id).map(x -> contactMapper.toDto(x, ContactDetailDTO.class))
                 .orElseThrow(() -> new ResourceNotFoundException(String.format(CONTACT_NOT_FOUND, id)));
     }
 
-    public Page<ContactFrontDto> search(String keyword, String sortBy, String sortOrder, int page, int size) {
+    public Page<ContactDetailDTO> search(String keyword, String sortBy, String sortOrder, int page, int size) {
         return contactRepository.search(keyword, initPageable(sortBy, sortOrder, page, size))
-                .map(x -> contactMapper.toDto(x, ContactFrontDto.class));
+                .map(x -> contactMapper.toDto(x, ContactDetailDTO.class));
     }
 
-    public Page<ContactFrontDto> getContactByUser(Long id, String sortBy, String sortOrder, int page, int size) {
+    public Page<ContactDetailDTO> getContactByUser(Long id, String sortBy, String sortOrder, int page, int size) {
         return contactRepository.findByUserId(id, initPageable(sortBy, sortOrder, page, size))
-                .map(x -> contactMapper.toDto(x, ContactFrontDto.class));
+                .map(x -> contactMapper.toDto(x, ContactDetailDTO.class));
     }
 
-    public Page<ContactFrontDto> getContactByOrganization(
+    public Page<ContactDetailDTO> getContactByOrganization(
             Long id, String sortBy, String sortOrder, int page, int size) {
         return contactRepository.findByOrganizationId(id, initPageable(sortBy, sortOrder, page, size))
-                .map(x -> contactMapper.toDto(x, ContactFrontDto.class));
+                .map(x -> contactMapper.toDto(x, ContactDetailDTO.class));
     }
 
-    public Page<ContactFrontDto> getContactByPublic(
+    public Page<ContactDetailDTO> getContactByPublic(
             Boolean isPublic, String sortBy, String sortOrder, int page, int size) {
         return contactRepository.findByIsPublic(isPublic, initPageable(sortBy, sortOrder, page, size))
-                .map(x -> contactMapper.toDto(x, ContactFrontDto.class));
+                .map(x -> contactMapper.toDto(x, ContactDetailDTO.class));
     }
 
-    public ContactFrontDto createContact(ContactFormDto dto) {
+    public ContactMinimalDTO createContact(ContactFormDTO dto) {
         userService.exist(dto.user().id());
-        return contactMapper.toDto(contactRepository.save(contactMapper.toEntity(dto)), ContactFrontDto.class);
+        return contactMapper.toDto(contactRepository.save(contactMapper.toEntity(dto)), ContactMinimalDTO.class);
     }
 
-    public ContactFrontDto updateContact(Long id, ContactFormDto dto) {
+    public ContactMinimalDTO updateContact(Long id, ContactFormDTO dto) {
         exist(id);
         userService.exist(id);
         organizationService.exist(dto.organization().id());
         Contact newContact = contactMapper.toEntity(dto);
         newContact.setId(id);
-        return contactMapper.toDto(contactRepository.save(newContact), ContactFrontDto.class);
+        return contactMapper.toDto(contactRepository.save(newContact), ContactMinimalDTO.class);
     }
 
-    public ContactFrontDto updateIsPublic(Long id, Boolean isPublic) {
+    public ContactMinimalDTO updateIsPublic(Long id, Boolean isPublic) {
         Contact contact = contactRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException(String.format(CONTACT_NOT_FOUND, id)));
         contactRepository.updateIsPublic(id, isPublic);
         contact.setPublic(isPublic);
-        return contactMapper.toDto(contact, ContactFrontDto.class);
+        return contactMapper.toDto(contact, ContactMinimalDTO.class);
     }
 
 

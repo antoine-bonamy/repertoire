@@ -1,7 +1,8 @@
 package fr.bonamy.repertoire_back.controller;
 
-import fr.bonamy.repertoire_back.dto.front.ContactFormDto;
-import fr.bonamy.repertoire_back.dto.front.ContactFrontDto;
+import fr.bonamy.repertoire_back.dto.front.Contact.ContactDetailDTO;
+import fr.bonamy.repertoire_back.dto.front.Contact.ContactFormDTO;
+import fr.bonamy.repertoire_back.dto.front.Contact.ContactMinimalDTO;
 import fr.bonamy.repertoire_back.service.ContactService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,17 +24,17 @@ public class ContactController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<ContactFrontDto>> getAllContacts() {
+    public ResponseEntity<List<ContactDetailDTO>> getAllContacts() {
         return ResponseEntity.ok(contactService.getAllContacts());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ContactFrontDto> getContactById(@PathVariable Long id) {
+    public ResponseEntity<ContactDetailDTO> getContactById(@PathVariable Long id) {
         return ResponseEntity.ok(contactService.getContactById(id));
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Page<ContactFrontDto>> search(
+    public ResponseEntity<Page<ContactDetailDTO>> search(
             @RequestParam(name = "keyword") String keyword,
             @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
             @RequestParam(name = "sortOrder", defaultValue = "asc") String sortOrder,
@@ -44,7 +45,7 @@ public class ContactController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<Page<ContactFrontDto>> getContactByUser(
+    public ResponseEntity<Page<ContactDetailDTO>> getContactByUser(
             @PathVariable Long userId,
             @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
             @RequestParam(name = "sortOrder", defaultValue = "asc") String sortOrder,
@@ -55,7 +56,7 @@ public class ContactController {
     }
 
     @GetMapping("/organization/{organizationId}")
-    public ResponseEntity<Page<ContactFrontDto>> getContactByOrganization(
+    public ResponseEntity<Page<ContactDetailDTO>> getContactByOrganization(
             @PathVariable Long organizationId,
             @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
             @RequestParam(name = "sortOrder", defaultValue = "asc") String sortOrder,
@@ -67,7 +68,7 @@ public class ContactController {
     }
 
     @GetMapping("isPublic")
-    public ResponseEntity<Page<ContactFrontDto>> getContactByIsPublic(
+    public ResponseEntity<Page<ContactDetailDTO>> getContactByIsPublic(
             @RequestParam(name = "isPublic") Boolean isPublic,
             @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
             @RequestParam(name = "sortOrder", defaultValue = "asc") String sortOrder,
@@ -79,17 +80,17 @@ public class ContactController {
     }
 
     @PostMapping
-    public ResponseEntity<ContactFrontDto> createContact(@RequestBody ContactFormDto contact) {
+    public ResponseEntity<ContactMinimalDTO> createContact(@RequestBody ContactFormDTO contact) {
         return new ResponseEntity<>(contactService.createContact(contact), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ContactFrontDto> updateContact(@PathVariable Long id, @RequestBody ContactFormDto contact) {
+    public ResponseEntity<ContactMinimalDTO> updateContact(@PathVariable Long id, @RequestBody ContactFormDTO contact) {
         return new ResponseEntity<>(contactService.updateContact(id, contact), HttpStatus.CREATED);
     }
 
     @PutMapping("/isPublic/{id}")
-    public ResponseEntity<ContactFrontDto> updateIsPublic(@PathVariable Long id, @RequestBody Boolean isPublic) {
+    public ResponseEntity<ContactMinimalDTO> updateIsPublic(@PathVariable Long id, @RequestBody Boolean isPublic) {
         return new ResponseEntity<>(contactService.updateIsPublic(id, isPublic), HttpStatus.CREATED);
     }
 

@@ -1,8 +1,9 @@
 package fr.bonamy.repertoire_back.controller;
 
-import fr.bonamy.repertoire_back.dto.front.ContactGroupDto;
-import fr.bonamy.repertoire_back.dto.front.GroupFormDto;
-import fr.bonamy.repertoire_back.dto.front.GroupFrontDto;
+import fr.bonamy.repertoire_back.dto.front.AddContactToGroupDTO;
+import fr.bonamy.repertoire_back.dto.front.Group.GroupDetailDTO;
+import fr.bonamy.repertoire_back.dto.front.Group.GroupFormDTO;
+import fr.bonamy.repertoire_back.dto.front.Group.GroupMinimalDTO;
 import fr.bonamy.repertoire_back.service.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,17 +26,17 @@ public class GroupController {
     }
 
     @GetMapping
-    public ResponseEntity<List<GroupFrontDto>> getAllGroups() {
+    public ResponseEntity<List<GroupDetailDTO>> getAllGroups() {
         return ResponseEntity.ok(groupService.getAllGroups());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<GroupFrontDto> getGroupById(@PathVariable("id") Long id) {
+    public ResponseEntity<GroupDetailDTO> getGroupById(@PathVariable("id") Long id) {
         return ResponseEntity.ok(groupService.getGroupById(id));
     }
 
     @GetMapping("/byName")
-    public ResponseEntity<Page<GroupFrontDto>> getGroupByName(
+    public ResponseEntity<Page<GroupDetailDTO>> getGroupByName(
             @RequestParam(name = "keyword") String keyword,
             @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
             @RequestParam(name = "sortOrder", defaultValue = "asc") String sortOrder,
@@ -46,7 +47,7 @@ public class GroupController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Page<GroupFrontDto>> searchGroup(
+    public ResponseEntity<Page<GroupDetailDTO>> searchGroup(
             @RequestParam(name = "keyword") String keyword,
             @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
             @RequestParam(name = "sortOrder", defaultValue = "asc") String sortOrder,
@@ -57,7 +58,7 @@ public class GroupController {
     }
 
     @GetMapping("/isPublic")
-    public ResponseEntity<Page<GroupFrontDto>> getGroupByIsPublic(
+    public ResponseEntity<Page<GroupDetailDTO>> getGroupByIsPublic(
             @RequestParam(name = "isPublic") Boolean isPublic,
             @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
             @RequestParam(name = "sortOrder", defaultValue = "asc") String sortOrder,
@@ -68,17 +69,17 @@ public class GroupController {
     }
 
     @PostMapping
-    public ResponseEntity<GroupFrontDto> createUser(@RequestBody GroupFormDto dto) {
+    public ResponseEntity<GroupMinimalDTO> createUser(@RequestBody GroupFormDTO dto) {
         return new ResponseEntity<>(groupService.createGroup(dto), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<GroupFrontDto> updateGroup(@PathVariable Long id, @RequestBody GroupFormDto dto) {
+    public ResponseEntity<GroupMinimalDTO> updateGroup(@PathVariable Long id, @RequestBody GroupFormDTO dto) {
         return new ResponseEntity<>(groupService.updateGroup(id, dto), HttpStatus.CREATED);
     }
 
     @PutMapping("/isPublic/{id}")
-    public ResponseEntity<GroupFrontDto> updateIsPublic(@PathVariable Long id, @RequestBody Boolean isPublic) {
+    public ResponseEntity<GroupMinimalDTO> updateIsPublic(@PathVariable Long id, @RequestBody Boolean isPublic) {
         return new ResponseEntity<>(groupService.updateIsPublic(id, isPublic), HttpStatus.CREATED);
     }
 
@@ -88,13 +89,13 @@ public class GroupController {
     }
 
     @PostMapping("/addContact")
-    public ResponseEntity<Boolean> addContact(@RequestBody ContactGroupDto dto) {
+    public ResponseEntity<Boolean> addContact(@RequestBody AddContactToGroupDTO dto) {
         groupService.addContact(dto.groupId(), dto.contactId());
         return new ResponseEntity<>(Boolean.TRUE, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/removeContact")
-    public ResponseEntity<Boolean> removeContact(@RequestBody ContactGroupDto dto) {
+    public ResponseEntity<Boolean> removeContact(@RequestBody AddContactToGroupDTO dto) {
         groupService.removeContact(dto.groupId(), dto.contactId());
         return ResponseEntity.ok(Boolean.TRUE);
     }

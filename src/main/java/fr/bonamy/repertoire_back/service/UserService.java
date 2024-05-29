@@ -1,7 +1,8 @@
 package fr.bonamy.repertoire_back.service;
 
-import fr.bonamy.repertoire_back.dto.front.UserFormDto;
-import fr.bonamy.repertoire_back.dto.front.UserFrontDto;
+import fr.bonamy.repertoire_back.dto.front.User.UserDetailDTO;
+import fr.bonamy.repertoire_back.dto.front.User.UserFormDTO;
+import fr.bonamy.repertoire_back.dto.front.User.UserUpdatePasswordDTO;
 import fr.bonamy.repertoire_back.exception.ResourceAlreadyExist;
 import fr.bonamy.repertoire_back.exception.ResourceNotFoundException;
 import fr.bonamy.repertoire_back.mapper.UserMapper;
@@ -39,25 +40,25 @@ public class UserService {
                 () -> new ResourceNotFoundException(String.format(USER_NOT_FOUND, id)));
     }
 
-    public UserFrontDto getUserById(Long id) {
-        return userRepository.findById(id).map(user -> userMapper.toDto(user, UserFrontDto.class)).orElseThrow(
+    public UserDetailDTO getUserById(Long id) {
+        return userRepository.findById(id).map(user -> userMapper.toDto(user, UserDetailDTO.class)).orElseThrow(
                 () -> new ResourceNotFoundException(String.format(USER_NOT_FOUND, id)));
     }
 
-    public List<UserFrontDto> getAllUsers() {
+    public List<UserDetailDTO> getAllUsers() {
         return userRepository.findAll().stream()
-                .map(user -> userMapper.toDto(user, UserFrontDto.class))
+                .map(user -> userMapper.toDto(user, UserDetailDTO.class))
                 .collect(Collectors.toList());
     }
 
-    public Page<UserFrontDto> searchUsers(String keyword, String sortBy, String sortOrder, int page, int size) {
+    public Page<UserDetailDTO> searchUsers(String keyword, String sortBy, String sortOrder, int page, int size) {
         return userRepository.
                 findByFirstnameContainingIgnoreCaseOrLastnameContainingIgnoreCaseOrEmailContainingIgnoreCase(
                         keyword, keyword, keyword, initPageable(sortBy, sortOrder, page, size))
-                .map(user -> userMapper.toDto(user, UserFrontDto.class));
+                .map(user -> userMapper.toDto(user, UserDetailDTO.class));
     }
 
-    public UserFrontDto createUser(UserFormDto userDTO) {
+    public UserDetailDTO createUser(UserFormDTO userDTO) {
         User user = userMapper.toEntity(userDTO);
         User probe = new User();
         probe.setEmail(user.getEmail());
@@ -65,15 +66,24 @@ public class UserService {
             throw new ResourceAlreadyExist(String.format(USER_ALREADY_EXIST, user.getEmail()));
         }
         user = userRepository.save(user);
-        return userMapper.toDto(user, UserFrontDto.class);
+        return userMapper.toDto(user, UserDetailDTO.class);
     }
 
-    public UserFrontDto updateUser(Long id, UserFormDto userDTO) {
+    public UserDetailDTO updateUser(Long id, UserFormDTO userDTO) {
         exist(id);
         User newUser = userMapper.toEntity(userDTO);
         newUser.setId(id);
         userRepository.save(newUser);
-        return userMapper.toDto(newUser, UserFrontDto.class);
+        return userMapper.toDto(newUser, UserDetailDTO.class);
+    }
+
+    public UserDetailDTO updatePassword(Long id, UserUpdatePasswordDTO newUser) {
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException(String.format(USER_NOT_FOUND, id)));
+        userRepository.updatePassword(id, newUser.password());
+        user.setPassword(newUser.password());
+        return userMapper.toDto(user, UserDetailDTO.class);
+
     }
 
     public boolean deleteUser(Long id) {

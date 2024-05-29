@@ -1,7 +1,8 @@
 package fr.bonamy.repertoire_back.controller;
 
-import fr.bonamy.repertoire_back.dto.front.UserFormDto;
-import fr.bonamy.repertoire_back.dto.front.UserFrontDto;
+import fr.bonamy.repertoire_back.dto.front.User.UserDetailDTO;
+import fr.bonamy.repertoire_back.dto.front.User.UserFormDTO;
+import fr.bonamy.repertoire_back.dto.front.User.UserUpdatePasswordDTO;
 import fr.bonamy.repertoire_back.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,17 +25,17 @@ public class UserController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<UserFrontDto>> getAllUsers() {
+    public ResponseEntity<List<UserDetailDTO>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserFrontDto> getUserById(@PathVariable Long id) {
+    public ResponseEntity<UserDetailDTO> getUserById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
     @GetMapping
-    public ResponseEntity<Page<UserFrontDto>> searchUsers(
+    public ResponseEntity<Page<UserDetailDTO>> searchUsers(
             @RequestParam(name = "keyword", defaultValue = "") String keyword,
             @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
             @RequestParam(name = "sortOrder", defaultValue = "asc") String sortOrder,
@@ -45,13 +46,20 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserFrontDto> createUser(@Valid @RequestBody UserFormDto userDTO) {
+    public ResponseEntity<UserDetailDTO> createUser(@Valid @RequestBody UserFormDTO userDTO) {
         return new ResponseEntity<>(userService.createUser(userDTO), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserFrontDto> updateUser(@PathVariable Long id, @Valid @RequestBody UserFormDto userDTO) {
+    public ResponseEntity<UserDetailDTO> updateUser(@PathVariable Long id, @Valid @RequestBody UserFormDTO userDTO) {
         return new ResponseEntity<>(userService.updateUser(id, userDTO), HttpStatus.CREATED);
+    }
+
+    @PutMapping("password/{id}")
+    public ResponseEntity<UserDetailDTO> updatePassword(
+            @PathVariable Long id,
+            @Valid @RequestBody UserUpdatePasswordDTO user) {
+        return new ResponseEntity<>(userService.updatePassword(id, user), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")

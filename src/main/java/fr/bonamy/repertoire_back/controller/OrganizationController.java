@@ -1,7 +1,8 @@
 package fr.bonamy.repertoire_back.controller;
 
-import fr.bonamy.repertoire_back.dto.front.OrganizationFormDto;
-import fr.bonamy.repertoire_back.dto.front.OrganizationFrontDto;
+import fr.bonamy.repertoire_back.dto.front.Organization.OrganizationDetailDTO;
+import fr.bonamy.repertoire_back.dto.front.Organization.OrganizationFormDto;
+import fr.bonamy.repertoire_back.dto.front.Organization.OrganizationMinimalDTO;
 import fr.bonamy.repertoire_back.service.OrganizationService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,17 +25,17 @@ public class OrganizationController {
     }
 
     @GetMapping
-    public ResponseEntity<List<OrganizationFrontDto>> getAll() {
+    public ResponseEntity<List<OrganizationDetailDTO>> getAll() {
         return ResponseEntity.ok(organizationService.getAllOrganizations());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<OrganizationFrontDto> getOrganizationById(@PathVariable Long id) {
+    public ResponseEntity<OrganizationDetailDTO> getOrganizationById(@PathVariable Long id) {
         return ResponseEntity.ok(organizationService.getOrganizationById(id));
     }
 
     @GetMapping("/byUser")
-    public ResponseEntity<Page<OrganizationFrontDto>> getOrganizationByUserFirstNameAndUserLastName(
+    public ResponseEntity<Page<OrganizationDetailDTO>> getOrganizationByUserFirstNameAndUserLastName(
             @RequestParam(name = "name") String name,
             @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
             @RequestParam(name = "sortOrder", defaultValue = "asc") String sortOrder,
@@ -46,7 +47,7 @@ public class OrganizationController {
     }
 
     @GetMapping("/byNameComment")
-    public ResponseEntity<Page<OrganizationFrontDto>> getByNameIgnoreCaseAndCommentIgnoreCase(
+    public ResponseEntity<Page<OrganizationDetailDTO>> getByNameIgnoreCaseAndCommentIgnoreCase(
             @RequestParam(name = "keyword") String keyword,
             @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
             @RequestParam(name = "sortOrder", defaultValue = "asc") String sortOrder,
@@ -58,7 +59,7 @@ public class OrganizationController {
     }
 
     @GetMapping("/byIsPublic")
-    public ResponseEntity<Page<OrganizationFrontDto>> getByIsPublic(
+    public ResponseEntity<Page<OrganizationDetailDTO>> getByIsPublic(
             @RequestParam(name = "isPublic") Boolean isPublic,
             @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
             @RequestParam(name = "sortOrder", defaultValue = "asc") String sortOrder,
@@ -70,19 +71,19 @@ public class OrganizationController {
     }
 
     @PostMapping
-    public ResponseEntity<OrganizationFrontDto> createOrganization(
+    public ResponseEntity<OrganizationMinimalDTO> createOrganization(
             @Valid @RequestBody OrganizationFormDto organizationFormDto) {
         return new ResponseEntity<>(organizationService.createOrganization(organizationFormDto), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<OrganizationFrontDto> updateUser(
+    public ResponseEntity<OrganizationMinimalDTO> updateUser(
             @PathVariable Long id, @Valid @RequestBody OrganizationFormDto organizationFormDto) {
         return new ResponseEntity<>(organizationService.updateUser(id, organizationFormDto), HttpStatus.CREATED);
     }
 
     @PutMapping("/isPublic/{id}")
-    public ResponseEntity<OrganizationFrontDto> updateIsPublic(@PathVariable Long id, @RequestBody Boolean isPublic) {
+    public ResponseEntity<OrganizationMinimalDTO> updateIsPublic(@PathVariable Long id, @RequestBody Boolean isPublic) {
         return new ResponseEntity<>(organizationService.updateIsPublic(id, isPublic), HttpStatus.CREATED);
     }
 

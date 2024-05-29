@@ -1,6 +1,9 @@
-package fr.bonamy.repertoire_back.dto.front;
+package fr.bonamy.repertoire_back.dto.front.Contact;
 
-public record ContactFormDto(
+import fr.bonamy.repertoire_back.dto.front.Organization.OrganizationIdDTO;
+import fr.bonamy.repertoire_back.dto.front.User.UserIdDTO;
+
+public record ContactFormDTO(
         String firstname,
         String lastname,
         String email,
