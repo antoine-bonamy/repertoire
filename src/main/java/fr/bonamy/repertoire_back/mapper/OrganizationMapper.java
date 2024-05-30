@@ -35,12 +35,7 @@ public class OrganizationMapper {
                             filter(x -> x.getName().contains("user")).findFirst().get().getType();
                     constructorArgs.add(userMapper.toDto(organization.getUser(), userDtoClass));
                 } else {
-                    Method method;
-                    if (field.getType().equals(Boolean.class)) {
-                        method = Organization.class.getMethod("get" + field.getName().substring(2));
-                    } else {
-                        method = Organization.class.getMethod("get" + capitalize(field.getName()));
-                    }
+                    Method method = Organization.class.getMethod("get" + capitalize(field.getName()));
                     constructorArgs.add(method.invoke(organization));
                 }
             }
@@ -64,16 +59,9 @@ public class OrganizationMapper {
                     Method setMethod = Organization.class.getMethod("set" + capitalize(field.getName()), User.class);
                     setMethod.invoke(organization, userMapper.toEntity(recordMethod.invoke(dto)));
                 } else {
-                    Method setMethod;
-                    if (field.getType().equals(Boolean.class)) {
-                        setMethod =
-                                Organization.class.getMethod("set" + field.getName().substring(2), field.getType());
-                    } else {
-                        setMethod =
-                                Organization.class.getMethod("set" + capitalize(field.getName()), field.getType());
-                    }
+                    Method setMethod =
+                            Organization.class.getMethod("set" + capitalize(field.getName()), field.getType());
                     setMethod.invoke(organization, recordMethod.invoke(dto));
-
                 }
             }
             return organization;

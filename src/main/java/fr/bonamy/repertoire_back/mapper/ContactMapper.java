@@ -43,12 +43,7 @@ public class ContactMapper {
                             filter(x -> x.getName().contains("organization")).findFirst().get().getType();
                     constructorArgs.add(organizationMapper.toDto(contact.getOrganization(), organizationDtoClass));
                 } else {
-                    Method method;
-                    if (field.getType().equals(Boolean.class)) {
-                        method = Contact.class.getMethod("get" + field.getName().substring(2));
-                    } else {
-                        method = Contact.class.getMethod("get" + capitalize(field.getName()));
-                    }
+                    Method method = Contact.class.getMethod("get" + capitalize(field.getName()));
                     constructorArgs.add(method.invoke(contact));
                 }
             }
@@ -74,16 +69,8 @@ public class ContactMapper {
                     Method setMethod = Contact.class.getMethod("set" + capitalize(field.getName()), Organization.class);
                     setMethod.invoke(contact, organizationMapper.toEntity(recordMethod.invoke(dto)));
                 } else {
-                    Method setMethod;
-                    if (field.getType().equals(Boolean.class)) {
-                        setMethod =
-                                Contact.class.getMethod("set" + field.getName().substring(2), field.getType());
-                    } else {
-                        setMethod =
-                                Contact.class.getMethod("set" + capitalize(field.getName()), field.getType());
-                    }
+                    Method setMethod = Contact.class.getMethod("set" + capitalize(field.getName()), field.getType());
                     setMethod.invoke(contact, recordMethod.invoke(dto));
-
                 }
             }
             return contact;

@@ -1,4 +1,4 @@
-package fr.bonamy.repertoire_back.dto.front.User;
+package fr.bonamy.repertoire_back.dto.User;
 
 import fr.bonamy.repertoire_back.util.ValidPassword;
 import jakarta.validation.constraints.NotNull;

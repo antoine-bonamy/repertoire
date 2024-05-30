@@ -13,17 +13,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public interface GroupRepository extends JpaRepository<Group, Long> {
 
-    Page<Group> findByNameContainingIgnoreCase(String keyword, Pageable pageable);
-
-    Page<Group> findByNameContainingIgnoreCaseOrCommentContainingIgnoreCase(
-            String name, String comment, Pageable pageable);
-
-    Page<Group> findByIsPublic(Boolean isPublic, Pageable pageable);
-
-    @Modifying
-    @Transactional
-    @Query(value = "UPDATE `GROUP` SET is_public=:isPublic WHERE id=:id", nativeQuery = true)
-    void updateIsPublic(@Param("id") Long id, @Param("isPublic") Boolean isPublic);
+    @Query(value = """
+            SELECT g.id, g.name, g.comment, g.user_id, u.firstname, u.lastname, u.email, u.password
+            FROM `GROUP` g INNER JOIN USER u ON g.user_id= u.id
+            WHERE (g.name LIKE CONCAT('%', :keyword, '%') OR g.comment LIKE CONCAT('%', :keyword, '%'))
+            AND g.user_id = :userId
+            """, nativeQuery = true)
+    Page<Group> search(
+            @Param("userId") Long userId, @Param("keyword") String keyword, Pageable pageable);
 
     @Transactional
     @Modifying
@@ -36,5 +33,12 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
     @Query(value = "DELETE FROM LINK_CONTACT_GROUP WHERE group_id=:groupId AND contact_id=:contactId",
             nativeQuery = true)
     void removeContact(@Param("groupId") Long groupId, @Param("contactId") Long contactId);
+
+    @Query(value = """
+            SELECT IF(EXISTS(
+                SELECT * FROM LINK_CONTACT_GROUP lcg 
+                WHERE lcg.group_id = :groupId AND lcg.contact_id = :contactId), TRUE, FALSE)""",
+            nativeQuery = true)
+    Long isContactInGroup(@Param("groupId") Long groupId, @Param("contactId") Long contactId);
 
 }

@@ -50,12 +50,7 @@ public class GroupMapper {
                                 .collect(Collectors.toList()));
                     }
                 } else {
-                    Method method;
-                    if (field.getType().equals(Boolean.class)) {
-                        method = Group.class.getMethod("get" + field.getName().substring(2));
-                    } else {
-                        method = Group.class.getMethod("get" + capitalize(field.getName()));
-                    }
+                    Method method = Group.class.getMethod("get" + capitalize(field.getName()));
                     constructorArgs.add(method.invoke(group));
                 }
             }
@@ -79,14 +74,7 @@ public class GroupMapper {
                     Method setMethod = Group.class.getMethod("set" + capitalize(field.getName()), User.class);
                     setMethod.invoke(group, userMapper.toEntity(recordMethod.invoke(dto)));
                 } else {
-                    Method setMethod;
-                    if (field.getType().equals(Boolean.class)) {
-                        setMethod =
-                                Group.class.getMethod("set" + field.getName().substring(2), field.getType());
-                    } else {
-                        setMethod =
-                                Group.class.getMethod("set" + capitalize(field.getName()), field.getType());
-                    }
+                    Method setMethod = Group.class.getMethod("set" + capitalize(field.getName()), field.getType());
                     setMethod.invoke(group, recordMethod.invoke(dto));
                 }
             }

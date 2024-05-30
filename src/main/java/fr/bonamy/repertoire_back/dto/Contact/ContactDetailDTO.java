@@ -1,7 +1,7 @@
-package fr.bonamy.repertoire_back.dto.front.Contact;
+package fr.bonamy.repertoire_back.dto.Contact;
 
-import fr.bonamy.repertoire_back.dto.front.Organization.OrganizationDetailDTO;
-import fr.bonamy.repertoire_back.dto.front.User.UserDetailDTO;
+import fr.bonamy.repertoire_back.dto.Organization.OrganizationDetailDTO;
+import fr.bonamy.repertoire_back.dto.User.UserDetailDTO;
 
 public record ContactDetailDTO(
         Long id,
@@ -11,7 +11,6 @@ public record ContactDetailDTO(
         String phone,
         String address,
         String comment,
-        Boolean isPublic,
         OrganizationDetailDTO organization,
         UserDetailDTO user
 

@@ -31,9 +31,6 @@ public class Contact {
     @Column(name = "comment")
     private String comment;
 
-    @Column(name = "is_public")
-    private Boolean isPublic;
-
     @ManyToOne
     @JoinColumn(name = "organization_id")
     private Organization organization;
@@ -46,7 +43,7 @@ public class Contact {
     }
 
     public Contact(Long id, String firstname, String lastname, String email, String phone, String address,
-                   String comment, Boolean isPublic, Organization organization, User user) {
+                   String comment, Organization organization, User user) {
         this.id = id;
         this.firstname = firstname;
         this.lastname = lastname;
@@ -54,7 +51,6 @@ public class Contact {
         this.phone = phone;
         this.address = address;
         this.comment = comment;
-        this.isPublic = isPublic;
         this.organization = organization;
         this.user = user;
     }
@@ -115,14 +111,6 @@ public class Contact {
         this.comment = comment;
     }
 
-    public Boolean getPublic() {
-        return isPublic;
-    }
-
-    public void setPublic(Boolean aPublic) {
-        isPublic = aPublic;
-    }
-
     public Organization getOrganization() {
         return organization;
     }
@@ -151,14 +139,13 @@ public class Contact {
                 && Objects.equals(phone, contact.phone)
                 && Objects.equals(address, contact.address)
                 && Objects.equals(comment, contact.comment)
-                && Objects.equals(isPublic, contact.isPublic)
                 && Objects.equals(organization, contact.organization)
                 && Objects.equals(user, contact.user);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstname, lastname, email, phone, address, comment, isPublic, organization, user);
+        return Objects.hash(id, firstname, lastname, email, phone, address, comment, organization, user);
     }
 
     @Override
@@ -171,7 +158,6 @@ public class Contact {
                 ", phone='" + phone + '\'' +
                 ", address='" + address + '\'' +
                 ", comment='" + comment + '\'' +
-                ", isPublic=" + isPublic +
                 ", organization=" + organization +
                 ", user=" + user +
                 '}';

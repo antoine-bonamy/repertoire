@@ -19,9 +19,6 @@ public class Group {
     @Column(name = "comment")
     private String comment;
 
-    @Column(name = "is_public")
-    private Boolean isPublic;
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -37,12 +34,11 @@ public class Group {
     public Group() {
     }
 
-    public Group(Long id, String name, List<Contact> contactList, String comment, Boolean isPublic, User user) {
+    public Group(Long id, String name, List<Contact> contactList, String comment, User user) {
         this.id = id;
         this.name = name;
         this.contacts = contactList;
         this.comment = comment;
-        this.isPublic = isPublic;
         this.user = user;
     }
 
@@ -78,14 +74,6 @@ public class Group {
         this.comment = comment;
     }
 
-    public Boolean getPublic() {
-        return isPublic;
-    }
-
-    public void setPublic(Boolean aPublic) {
-        isPublic = aPublic;
-    }
-
     public User getUser() {
         return user;
     }
@@ -103,13 +91,12 @@ public class Group {
                 && Objects.equals(name, group.name)
                 && Objects.equals(contacts, group.contacts)
                 && Objects.equals(comment, group.comment)
-                && Objects.equals(isPublic, group.isPublic)
                 && Objects.equals(user, group.user);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, contacts, comment, isPublic, user);
+        return Objects.hash(id, name, contacts, comment, user);
     }
 
     @Override
@@ -119,7 +106,6 @@ public class Group {
                 ", name='" + name + '\'' +
                 ", contactList=" + contacts +
                 ", comment='" + comment + '\'' +
-                ", isPublic=" + isPublic +
                 ", user=" + user +
                 '}';
     }

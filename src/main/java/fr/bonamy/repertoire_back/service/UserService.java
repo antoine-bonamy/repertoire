@@ -1,19 +1,19 @@
 package fr.bonamy.repertoire_back.service;
 
-import fr.bonamy.repertoire_back.dto.front.User.UserDetailDTO;
-import fr.bonamy.repertoire_back.dto.front.User.UserFormDTO;
-import fr.bonamy.repertoire_back.dto.front.User.UserUpdatePasswordDTO;
+import fr.bonamy.repertoire_back.dto.User.UserDetailDTO;
+import fr.bonamy.repertoire_back.dto.User.UserFormDTO;
+import fr.bonamy.repertoire_back.dto.User.UserUpdatePasswordDTO;
 import fr.bonamy.repertoire_back.exception.ResourceAlreadyExist;
 import fr.bonamy.repertoire_back.exception.ResourceNotFoundException;
 import fr.bonamy.repertoire_back.mapper.UserMapper;
 import fr.bonamy.repertoire_back.model.User;
 import fr.bonamy.repertoire_back.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import static fr.bonamy.repertoire_back.util.InitPageable.initPageable;
 
 @Service
 public class UserService {
@@ -30,35 +30,24 @@ public class UserService {
         this.userMapper = userMapper;
     }
 
-    private Pageable initPageable(String sortBy, String sortOrder, int page, int size) {
-        Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
-        return PageRequest.of(page, size, Sort.by(direction, sortBy));
-    }
-
     public void exist(Long id) {
         userRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException(String.format(USER_NOT_FOUND, id)));
     }
 
-    public UserDetailDTO getUserById(Long id) {
+    public UserDetailDTO getById(Long id) {
         return userRepository.findById(id).map(user -> userMapper.toDto(user, UserDetailDTO.class)).orElseThrow(
                 () -> new ResourceNotFoundException(String.format(USER_NOT_FOUND, id)));
     }
 
-    public List<UserDetailDTO> getAllUsers() {
-        return userRepository.findAll().stream()
-                .map(user -> userMapper.toDto(user, UserDetailDTO.class))
-                .collect(Collectors.toList());
-    }
-
-    public Page<UserDetailDTO> searchUsers(String keyword, String sortBy, String sortOrder, int page, int size) {
+    public Page<UserDetailDTO> search(String keyword, String sortBy, String sortOrder, int page, int size) {
         return userRepository.
                 findByFirstnameContainingIgnoreCaseOrLastnameContainingIgnoreCaseOrEmailContainingIgnoreCase(
                         keyword, keyword, keyword, initPageable(sortBy, sortOrder, page, size))
                 .map(user -> userMapper.toDto(user, UserDetailDTO.class));
     }
 
-    public UserDetailDTO createUser(UserFormDTO userDTO) {
+    public UserDetailDTO create(UserFormDTO userDTO) {
         User user = userMapper.toEntity(userDTO);
         User probe = new User();
         probe.setEmail(user.getEmail());
@@ -69,7 +58,7 @@ public class UserService {
         return userMapper.toDto(user, UserDetailDTO.class);
     }
 
-    public UserDetailDTO updateUser(Long id, UserFormDTO userDTO) {
+    public UserDetailDTO update(Long id, UserFormDTO userDTO) {
         exist(id);
         User newUser = userMapper.toEntity(userDTO);
         newUser.setId(id);
@@ -86,7 +75,7 @@ public class UserService {
 
     }
 
-    public boolean deleteUser(Long id) {
+    public Boolean delete(Long id) {
         exist(id);
         userRepository.deleteById(id);
         return true;

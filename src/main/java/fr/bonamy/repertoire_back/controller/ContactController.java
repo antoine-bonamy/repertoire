@@ -1,16 +1,14 @@
 package fr.bonamy.repertoire_back.controller;
 
-import fr.bonamy.repertoire_back.dto.front.Contact.ContactDetailDTO;
-import fr.bonamy.repertoire_back.dto.front.Contact.ContactFormDTO;
-import fr.bonamy.repertoire_back.dto.front.Contact.ContactMinimalDTO;
+import fr.bonamy.repertoire_back.dto.Contact.ContactDetailDTO;
+import fr.bonamy.repertoire_back.dto.Contact.ContactFormDTO;
+import fr.bonamy.repertoire_back.dto.Contact.ContactMinimalDTO;
 import fr.bonamy.repertoire_back.service.ContactService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/contacts")
@@ -23,81 +21,49 @@ public class ContactController {
         this.contactService = contactService;
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<List<ContactDetailDTO>> getAllContacts() {
-        return ResponseEntity.ok(contactService.getAllContacts());
-    }
-
     @GetMapping("/{id}")
-    public ResponseEntity<ContactDetailDTO> getContactById(@PathVariable Long id) {
-        return ResponseEntity.ok(contactService.getContactById(id));
+    public ResponseEntity<ContactDetailDTO> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(contactService.getById(id));
     }
 
-    @GetMapping("/search")
+    @GetMapping("/search/{userId}")
     public ResponseEntity<Page<ContactDetailDTO>> search(
+            @PathVariable Long userId,
             @RequestParam(name = "keyword") String keyword,
             @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
             @RequestParam(name = "sortOrder", defaultValue = "asc") String sortOrder,
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
-        return ResponseEntity.ok(contactService.search(keyword, sortBy, sortOrder, page, size));
+        return ResponseEntity.ok(contactService.search(userId, keyword, sortBy, sortOrder, page, size));
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<Page<ContactDetailDTO>> getContactByUser(
+    @GetMapping("/organization/{organizationId}/{userId}")
+    public ResponseEntity<Page<ContactDetailDTO>> getByOrganization(
+            @PathVariable Long organizationId,
             @PathVariable Long userId,
             @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
             @RequestParam(name = "sortOrder", defaultValue = "asc") String sortOrder,
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
-        return ResponseEntity.ok(contactService.getContactByUser(userId, sortBy, sortOrder, page, size));
-    }
-
-    @GetMapping("/organization/{organizationId}")
-    public ResponseEntity<Page<ContactDetailDTO>> getContactByOrganization(
-            @PathVariable Long organizationId,
-            @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
-            @RequestParam(name = "sortOrder", defaultValue = "asc") String sortOrder,
-            @RequestParam(name = "page", defaultValue = "0") int page,
-            @RequestParam(name = "size", defaultValue = "10") int size
-    ) {
-        return ResponseEntity.ok(contactService.getContactByOrganization(organizationId, sortBy, sortOrder, page,
-                size));
-    }
-
-    @GetMapping("isPublic")
-    public ResponseEntity<Page<ContactDetailDTO>> getContactByIsPublic(
-            @RequestParam(name = "isPublic") Boolean isPublic,
-            @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
-            @RequestParam(name = "sortOrder", defaultValue = "asc") String sortOrder,
-            @RequestParam(name = "page", defaultValue = "0") int page,
-            @RequestParam(name = "size", defaultValue = "10") int size
-    ) {
         return ResponseEntity.ok(
-                contactService.getContactByPublic(isPublic, sortBy, sortOrder, page, size));
+                contactService.getByOrganization(userId, organizationId, sortBy, sortOrder, page, size));
     }
 
     @PostMapping
-    public ResponseEntity<ContactMinimalDTO> createContact(@RequestBody ContactFormDTO contact) {
-        return new ResponseEntity<>(contactService.createContact(contact), HttpStatus.CREATED);
+    public ResponseEntity<ContactMinimalDTO> create(@RequestBody ContactFormDTO contact) {
+        return new ResponseEntity<>(contactService.create(contact), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ContactMinimalDTO> updateContact(@PathVariable Long id, @RequestBody ContactFormDTO contact) {
-        return new ResponseEntity<>(contactService.updateContact(id, contact), HttpStatus.CREATED);
-    }
-
-    @PutMapping("/isPublic/{id}")
-    public ResponseEntity<ContactMinimalDTO> updateIsPublic(@PathVariable Long id, @RequestBody Boolean isPublic) {
-        return new ResponseEntity<>(contactService.updateIsPublic(id, isPublic), HttpStatus.CREATED);
+    public ResponseEntity<ContactMinimalDTO> update(@PathVariable Long id, @RequestBody ContactFormDTO contact) {
+        return new ResponseEntity<>(contactService.update(id, contact), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Boolean> deleteContact(@PathVariable Long id) {
+    public ResponseEntity<Boolean> delete(@PathVariable Long id) {
         return ResponseEntity.ok(contactService.deleteContact(id));
     }
-
 
 }

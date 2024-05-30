@@ -18,9 +18,6 @@ public class Organization {
     @Column(name = "comment")
     private String comment;
 
-    @Column(name = "is_public")
-    private Boolean isPublic;
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -28,11 +25,10 @@ public class Organization {
     public Organization() {
     }
 
-    public Organization(Long id, String name, String comment, Boolean isPublic, User user) {
+    public Organization(Long id, String name, String comment, User user) {
         this.id = id;
         this.name = name;
         this.comment = comment;
-        this.isPublic = isPublic;
         this.user = user;
     }
 
@@ -60,14 +56,6 @@ public class Organization {
         this.comment = comment;
     }
 
-    public Boolean getPublic() {
-        return isPublic;
-    }
-
-    public void setPublic(Boolean aPublic) {
-        isPublic = aPublic;
-    }
-
     public User getUser() {
         return user;
     }
@@ -84,13 +72,12 @@ public class Organization {
         return Objects.equals(id, that.id)
                 && Objects.equals(name, that.name)
                 && Objects.equals(comment, that.comment)
-                && Objects.equals(isPublic, that.isPublic)
                 && Objects.equals(user, that.user);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, comment, isPublic, user);
+        return Objects.hash(id, name, comment, user);
     }
 
     @Override
@@ -99,7 +86,6 @@ public class Organization {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", comment='" + comment + '\'' +
-                ", isPublic=" + isPublic +
                 ", user=" + user +
                 '}';
     }

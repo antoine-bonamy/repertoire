@@ -1,10 +1,11 @@
-package fr.bonamy.repertoire_back.dto.front.Group;
+package fr.bonamy.repertoire_back.dto.Organization;
 
-import fr.bonamy.repertoire_back.dto.front.User.UserIdDTO;
+import fr.bonamy.repertoire_back.dto.User.UserIdDTO;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 
-public record GroupFormDTO(
+public record OrganizationFormDto(
+
         @NotNull(message = "Name cannot be null")
         @Length(min = 1, max = 64, message = "Name length must be between 1 and 64")
         String name,
@@ -12,10 +13,7 @@ public record GroupFormDTO(
         @Length(max = 1000, message = "Comment length cannot be superior to 1000")
         String comment,
 
-        @NotNull(message = "IsPublic cannot be null")
-        Boolean isPublic,
+        @NotNull(message = "User cannot be null")
+        UserIdDTO user) {
 
-        @NotNull(message = "UserId cannot be null")
-        UserIdDTO user
-) {
 }
