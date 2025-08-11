@@ -3,10 +3,11 @@ package fr.bonamy.repertoire_back.model;
 
 import jakarta.persistence.*;
 
+import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "CONTACT")
+@Table(name = "contact")
 public class Contact {
 
     @Id
@@ -28,8 +29,8 @@ public class Contact {
     @Column(name = "address")
     private String address;
 
-    @Column(name = "comment")
-    private String comment;
+    @Column(name = "note")
+    private String note;
 
     @ManyToOne
     @JoinColumn(name = "organization_id")
@@ -39,18 +40,26 @@ public class Contact {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @ManyToMany
+    @JoinTable(
+            name = "link_contact_group_contact",
+            joinColumns = @JoinColumn(name = "contact_id"),
+            inverseJoinColumns = @JoinColumn(name = "group_id")
+    )
+    private List<Group> groups;
+
     public Contact() {
     }
 
     public Contact(Long id, String firstname, String lastname, String email, String phone, String address,
-                   String comment, Organization organization, User user) {
+                   String note, Organization organization, User user) {
         this.id = id;
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
         this.phone = phone;
         this.address = address;
-        this.comment = comment;
+        this.note = note;
         this.organization = organization;
         this.user = user;
     }
@@ -103,12 +112,12 @@ public class Contact {
         this.address = address;
     }
 
-    public String getComment() {
-        return comment;
+    public String getNote() {
+        return note;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setNote(String comment) {
+        this.note = comment;
     }
 
     public Organization getOrganization() {
@@ -138,14 +147,14 @@ public class Contact {
                 && Objects.equals(email, contact.email)
                 && Objects.equals(phone, contact.phone)
                 && Objects.equals(address, contact.address)
-                && Objects.equals(comment, contact.comment)
+                && Objects.equals(note, contact.note)
                 && Objects.equals(organization, contact.organization)
                 && Objects.equals(user, contact.user);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstname, lastname, email, phone, address, comment, organization, user);
+        return Objects.hash(id, firstname, lastname, email, phone, address, note, organization, user);
     }
 
     @Override
@@ -157,7 +166,7 @@ public class Contact {
                 ", email='" + email + '\'' +
                 ", phone='" + phone + '\'' +
                 ", address='" + address + '\'' +
-                ", comment='" + comment + '\'' +
+                ", comment='" + note + '\'' +
                 ", organization=" + organization +
                 ", user=" + user +
                 '}';

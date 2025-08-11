@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "ORGANIZATION")
+@Table(name = "organization")
 public class Organization {
 
     @Id
@@ -15,8 +15,8 @@ public class Organization {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "comment")
-    private String comment;
+    @Column(name = "note")
+    private String note;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -25,10 +25,10 @@ public class Organization {
     public Organization() {
     }
 
-    public Organization(Long id, String name, String comment, User user) {
+    public Organization(Long id, String name, String note, User user) {
         this.id = id;
         this.name = name;
-        this.comment = comment;
+        this.note = note;
         this.user = user;
     }
 
@@ -48,12 +48,12 @@ public class Organization {
         this.name = name;
     }
 
-    public String getComment() {
-        return comment;
+    public String getNote() {
+        return note;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setNote(String comment) {
+        this.note = comment;
     }
 
     public User getUser() {
@@ -71,13 +71,13 @@ public class Organization {
         Organization that = (Organization) o;
         return Objects.equals(id, that.id)
                 && Objects.equals(name, that.name)
-                && Objects.equals(comment, that.comment)
+                && Objects.equals(note, that.note)
                 && Objects.equals(user, that.user);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, comment, user);
+        return Objects.hash(id, name, note, user);
     }
 
     @Override
@@ -85,7 +85,7 @@ public class Organization {
         return "Organization{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", comment='" + comment + '\'' +
+                ", comment='" + note + '\'' +
                 ", user=" + user +
                 '}';
     }

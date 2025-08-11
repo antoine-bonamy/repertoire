@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "`GROUP`")
+@Table(name = "contact_group")
 public class Group {
 
     @Id
@@ -16,8 +16,8 @@ public class Group {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "comment")
-    private String comment;
+    @Column(name = "note")
+    private String note;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -25,20 +25,19 @@ public class Group {
 
     @ManyToMany
     @JoinTable(
-            name = "LINK_CONTACT_GROUP",
+            name = "link_contact_group_contact",
             joinColumns = @JoinColumn(name = "group_id"),
             inverseJoinColumns = @JoinColumn(name = "contact_id"))
     private List<Contact> contacts;
 
-
     public Group() {
     }
 
-    public Group(Long id, String name, List<Contact> contactList, String comment, User user) {
+    public Group(Long id, String name, List<Contact> contactList, String note, User user) {
         this.id = id;
         this.name = name;
         this.contacts = contactList;
-        this.comment = comment;
+        this.note = note;
         this.user = user;
     }
 
@@ -66,12 +65,12 @@ public class Group {
         this.contacts = contactList;
     }
 
-    public String getComment() {
-        return comment;
+    public String getNote() {
+        return note;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setNote(String comment) {
+        this.note = comment;
     }
 
     public User getUser() {
@@ -90,13 +89,13 @@ public class Group {
         return Objects.equals(id, group.id)
                 && Objects.equals(name, group.name)
                 && Objects.equals(contacts, group.contacts)
-                && Objects.equals(comment, group.comment)
+                && Objects.equals(note, group.note)
                 && Objects.equals(user, group.user);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, contacts, comment, user);
+        return Objects.hash(id, name, contacts, note, user);
     }
 
     @Override
@@ -105,7 +104,7 @@ public class Group {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", contactList=" + contacts +
-                ", comment='" + comment + '\'' +
+                ", comment='" + note + '\'' +
                 ", user=" + user +
                 '}';
     }
