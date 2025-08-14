@@ -1,8 +1,7 @@
 package fr.bonamy.repertoire_back.controller;
 
-import fr.bonamy.repertoire_back.dto.User.UserDetailDTO;
-import fr.bonamy.repertoire_back.dto.User.UserFormDTO;
-import fr.bonamy.repertoire_back.dto.User.UserUpdatePasswordDTO;
+import fr.bonamy.repertoire_back.dto.User.UserDetailDto;
+import fr.bonamy.repertoire_back.dto.User.UserFormDto;
 import fr.bonamy.repertoire_back.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,12 +23,12 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDetailDTO> getById(@PathVariable Long id) {
+    public ResponseEntity<UserDetailDto> getById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getById(id));
     }
 
     @GetMapping
-    public ResponseEntity<Page<UserDetailDTO>> search(
+    public ResponseEntity<Page<UserDetailDto>> search(
             @RequestParam(name = "keyword", defaultValue = "") String keyword,
             @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
             @RequestParam(name = "sortOrder", defaultValue = "asc") String sortOrder,
@@ -40,19 +39,19 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserDetailDTO> create(@Valid @RequestBody UserFormDTO userDTO) {
+    public ResponseEntity<UserDetailDto> create(@Valid @RequestBody UserFormDto userDTO) {
         return new ResponseEntity<>(userService.create(userDTO), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserDetailDTO> update(@PathVariable Long id, @Valid @RequestBody UserFormDTO userDTO) {
+    public ResponseEntity<UserDetailDto> update(@PathVariable Long id, @Valid @RequestBody UserFormDto userDTO) {
         return new ResponseEntity<>(userService.update(id, userDTO), HttpStatus.CREATED);
     }
 
     @PutMapping("password/{id}")
-    public ResponseEntity<UserDetailDTO> updatePassword(
+    public ResponseEntity<UserDetailDto> updatePassword(
             @PathVariable Long id,
-            @Valid @RequestBody UserUpdatePasswordDTO user) {
+            @Valid @RequestBody UserFormDto user) {
         return new ResponseEntity<>(userService.updatePassword(id, user), HttpStatus.CREATED);
     }
 
