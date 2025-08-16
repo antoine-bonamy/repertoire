@@ -1,11 +1,15 @@
 package fr.bonamy.repertoire_back.model;
 
+import fr.bonamy.repertoire_back.dto.Organization.OrganizationDetailDto;
+import fr.bonamy.repertoire_back.dto.Organization.OrganizationFormDto;
 import jakarta.persistence.*;
+import lombok.Data;
 
-import java.util.Objects;
+import java.util.List;
 
 @Entity
 @Table(name = "organization")
+@Data
 public class Organization {
 
     @Id
@@ -22,72 +26,19 @@ public class Organization {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public Organization() {
-    }
+    @OneToMany(mappedBy = "organization")
+    private List<Contact> contacts;
 
-    public Organization(Long id, String name, String note, User user) {
-        this.id = id;
-        this.name = name;
-        this.note = note;
-        this.user = user;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public void setNote(String comment) {
-        this.note = comment;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Organization that = (Organization) o;
-        return Objects.equals(id, that.id)
-                && Objects.equals(name, that.name)
-                && Objects.equals(note, that.note)
-                && Objects.equals(user, that.user);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name, note, user);
-    }
-
-    @Override
-    public String toString() {
-        return "Organization{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", comment='" + note + '\'' +
-                ", user=" + user +
-                '}';
+    public static Organization of(OrganizationFormDto dto) {
+        Organization organization = new Organization();
+        if (dto instanceof OrganizationDetailDto) {
+            organization.setId(((OrganizationDetailDto) dto).getId());
+        }
+        organization.setName(dto.getName());
+        organization.setNote(dto.getNote());
+        organization.setUser(User.of(dto.getUser()));
+        organization.setContacts(List.of());// TODO: Liste des contacts
+        return organization;
     }
 
 }

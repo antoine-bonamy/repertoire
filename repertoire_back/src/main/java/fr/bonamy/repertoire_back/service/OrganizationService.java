@@ -1,10 +1,8 @@
 package fr.bonamy.repertoire_back.service;
 
-import fr.bonamy.repertoire_back.dto.Organization.OrganizationDetailDTO;
+import fr.bonamy.repertoire_back.dto.Organization.OrganizationDetailDto;
 import fr.bonamy.repertoire_back.dto.Organization.OrganizationFormDto;
-import fr.bonamy.repertoire_back.dto.Organization.OrganizationMinimalDTO;
 import fr.bonamy.repertoire_back.exception.ResourceNotFoundException;
-import fr.bonamy.repertoire_back.mapper.OrganizationMapper;
 import fr.bonamy.repertoire_back.model.Organization;
 import fr.bonamy.repertoire_back.repository.OrganizationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,16 +18,11 @@ public class OrganizationService {
     private static final String ORGANISATION_NOT_FOUND = "Organization with id:%s not found.";
 
     private final OrganizationRepository organizationRepository;
-    private final OrganizationMapper organizationMapper;
     private final UserService userService;
 
     @Autowired
-    public OrganizationService(
-            OrganizationRepository organizationRepository,
-            OrganizationMapper organizationMapper,
-            UserService userService) {
+    public OrganizationService(OrganizationRepository organizationRepository, UserService userService) {
         this.organizationRepository = organizationRepository;
-        this.organizationMapper = organizationMapper;
         this.userService = userService;
     }
 
@@ -38,31 +31,31 @@ public class OrganizationService {
                 () -> new ResourceNotFoundException(String.format(ORGANISATION_NOT_FOUND, id)));
     }
 
-    public OrganizationDetailDTO getById(Long id) {
-        return organizationRepository.findById(id).map(x -> organizationMapper.toDto(x, OrganizationDetailDTO.class))
+    public OrganizationDetailDto getById(Long id) {
+        return organizationRepository.findById(id).map(OrganizationDetailDto::of)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format(ORGANISATION_NOT_FOUND, id)));
     }
 
-    public Page<OrganizationDetailDTO> getByNameAndComment(
+    public Page<OrganizationDetailDto> getByNameAndComment(
             Long userId, String keyword, String sortBy, String sortOrder, int page, int size) {
         return organizationRepository.search(
                         userId, keyword, initPageable(sortBy, sortOrder, page, size))
-                .map(x -> organizationMapper.toDto(x, OrganizationDetailDTO.class));
+                .map(OrganizationDetailDto::of);
     }
 
-    public OrganizationMinimalDTO create(OrganizationFormDto dto) {
-        Organization organization = organizationMapper.toEntity(dto);
-        userService.exist(dto.user().id());
+    public OrganizationDetailDto create(OrganizationFormDto dto) {
+        Organization organization = Organization.of(dto);
+        userService.exist(dto.getUser().getId());
         //TODO: Verifier l'existence de l'organisation
-        return organizationMapper.toDto(organizationRepository.save(organization), OrganizationMinimalDTO.class);
+        return OrganizationDetailDto.of(organizationRepository.save(organization));
     }
 
-    public OrganizationMinimalDTO update(Long id, OrganizationFormDto dto) {
+    public OrganizationDetailDto update(Long id, OrganizationFormDto dto) {
         exist(id);
-        userService.exist(dto.user().id());
-        Organization newOrganization = organizationMapper.toEntity(dto);
+        userService.exist(dto.getUser().getId());
+        Organization newOrganization = Organization.of(dto);
         newOrganization.setId(id);
-        return organizationMapper.toDto(organizationRepository.save(newOrganization), OrganizationMinimalDTO.class);
+        return OrganizationDetailDto.of(organizationRepository.save(newOrganization));
     }
 
     public boolean delete(Long id) {
