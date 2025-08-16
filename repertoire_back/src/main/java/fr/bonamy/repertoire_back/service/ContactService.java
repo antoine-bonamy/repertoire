@@ -1,8 +1,7 @@
 package fr.bonamy.repertoire_back.service;
 
-import fr.bonamy.repertoire_back.dto.Contact.ContactDetailDTO;
-import fr.bonamy.repertoire_back.dto.Contact.ContactFormDTO;
-import fr.bonamy.repertoire_back.dto.Contact.ContactMinimalDTO;
+import fr.bonamy.repertoire_back.dto.Contact.ContactDetailDto;
+import fr.bonamy.repertoire_back.dto.Contact.ContactFormDto;
 import fr.bonamy.repertoire_back.exception.ResourceNotFoundException;
 import fr.bonamy.repertoire_back.mapper.ContactMapper;
 import fr.bonamy.repertoire_back.model.Contact;
@@ -39,36 +38,34 @@ public class ContactService {
                 .orElseThrow(() -> new ResourceNotFoundException(String.format(CONTACT_NOT_FOUND, id)));
     }
 
-    public ContactDetailDTO getById(Long id) {
-        return contactRepository.findById(id).map(x -> contactMapper.toDto(x, ContactDetailDTO.class))
+    public ContactDetailDto getById(Long id) {
+        return contactRepository.findById(id).map(x -> contactMapper.toDto(x, ContactDetailDto.class))
                 .orElseThrow(() -> new ResourceNotFoundException(String.format(CONTACT_NOT_FOUND, id)));
     }
 
-    public Page<ContactDetailDTO> search(Long userId, String keyword, String sortBy, String sortOrder, int page,
-                                         int size) {
+    public Page<ContactDetailDto> search(Long userId, String keyword, String sortBy, String sortOrder, int page, int size) {
         return contactRepository.search(userId, keyword, initPageable(sortBy, sortOrder, page, size))
-                .map(x -> contactMapper.toDto(x, ContactDetailDTO.class));
+                .map(x -> contactMapper.toDto(x, ContactDetailDto.class));
     }
 
-    public Page<ContactDetailDTO> getByOrganization(
+    public Page<ContactDetailDto> getByOrganization(
             Long userId, Long organizationId, String sortBy, String sortOrder, int page, int size) {
-        return contactRepository.findByOrganizationId(userId, organizationId, initPageable(sortBy, sortOrder, page,
-                        size))
-                .map(x -> contactMapper.toDto(x, ContactDetailDTO.class));
+        return contactRepository.findByOrganizationId(userId, organizationId, initPageable(sortBy, sortOrder, page, size))
+                .map(x -> contactMapper.toDto(x, ContactDetailDto.class));
     }
 
-    public ContactMinimalDTO create(ContactFormDTO dto) {
-        userService.exist(dto.user().id());
-        return contactMapper.toDto(contactRepository.save(contactMapper.toEntity(dto)), ContactMinimalDTO.class);
+    public ContactDetailDto create(ContactFormDto dto) {
+        userService.exist(dto.getUser().getId());
+        return ContactDetailDto.of(contactRepository.save(Contact.of(dto)));
     }
 
-    public ContactMinimalDTO update(Long id, ContactFormDTO dto) {
+    public ContactDetailDto update(Long id, ContactFormDto dto) {
         exist(id);
         userService.exist(id);
-        organizationService.exist(dto.organization().id());
+        organizationService.exist(dto.getOrganization().getId());
         Contact newContact = contactMapper.toEntity(dto);
         newContact.setId(id);
-        return contactMapper.toDto(contactRepository.save(newContact), ContactMinimalDTO.class);
+        return ContactDetailDto.of(contactRepository.save(newContact));
     }
 
     public Boolean deleteContact(Long id) {

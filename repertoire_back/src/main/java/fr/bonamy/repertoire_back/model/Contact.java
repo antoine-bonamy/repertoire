@@ -1,13 +1,17 @@
 package fr.bonamy.repertoire_back.model;
 
 
+import fr.bonamy.repertoire_back.dto.Contact.ContactDetailDto;
+import fr.bonamy.repertoire_back.dto.Contact.ContactFormDto;
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Table(name = "contact")
+@Data
 public class Contact {
 
     @Id
@@ -48,128 +52,21 @@ public class Contact {
     )
     private List<Group> groups;
 
-    public Contact() {
-    }
-
-    public Contact(Long id, String firstname, String lastname, String email, String phone, String address,
-                   String note, Organization organization, User user) {
-        this.id = id;
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.email = email;
-        this.phone = phone;
-        this.address = address;
-        this.note = note;
-        this.organization = organization;
-        this.user = user;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getFirstname() {
-        return firstname;
-    }
-
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public void setNote(String comment) {
-        this.note = comment;
-    }
-
-    public Organization getOrganization() {
-        return organization;
-    }
-
-    public void setOrganization(Organization organization) {
-        this.organization = organization;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Contact contact = (Contact) o;
-        return Objects.equals(id, contact.id)
-                && Objects.equals(firstname, contact.firstname)
-                && Objects.equals(lastname, contact.lastname)
-                && Objects.equals(email, contact.email)
-                && Objects.equals(phone, contact.phone)
-                && Objects.equals(address, contact.address)
-                && Objects.equals(note, contact.note)
-                && Objects.equals(organization, contact.organization)
-                && Objects.equals(user, contact.user);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, firstname, lastname, email, phone, address, note, organization, user);
-    }
-
-    @Override
-    public String toString() {
-        return "Contact{" +
-                "id=" + id +
-                ", firstname='" + firstname + '\'' +
-                ", lastname='" + lastname + '\'' +
-                ", email='" + email + '\'' +
-                ", phone='" + phone + '\'' +
-                ", address='" + address + '\'' +
-                ", comment='" + note + '\'' +
-                ", organization=" + organization +
-                ", user=" + user +
-                '}';
+    public static Contact of(ContactFormDto dto) {
+        Contact contact =  new Contact();
+        if (dto instanceof ContactDetailDto) {
+            contact.setId(((ContactDetailDto) dto).getId());
+        }
+        contact.setFirstname(dto.getFirstname());
+        contact.setLastname(dto.getLastname());
+        contact.setEmail(dto.getEmail());
+        contact.setPhone(dto.getPhone());
+        contact.setAddress(dto.getAddress());
+        contact.setNote(dto.getNote());
+        contact.setOrganization(Organization.of(dto.getOrganization()));
+        contact.setUser(User.of(dto.getUser()));
+        contact.setGroups(dto.getGroups());
+        return contact;
     }
 
 }

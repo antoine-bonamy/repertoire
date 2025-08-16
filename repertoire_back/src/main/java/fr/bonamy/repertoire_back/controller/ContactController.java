@@ -1,8 +1,7 @@
 package fr.bonamy.repertoire_back.controller;
 
-import fr.bonamy.repertoire_back.dto.Contact.ContactDetailDTO;
-import fr.bonamy.repertoire_back.dto.Contact.ContactFormDTO;
-import fr.bonamy.repertoire_back.dto.Contact.ContactMinimalDTO;
+import fr.bonamy.repertoire_back.dto.Contact.ContactDetailDto;
+import fr.bonamy.repertoire_back.dto.Contact.ContactFormDto;
 import fr.bonamy.repertoire_back.service.ContactService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,12 +22,12 @@ public class ContactController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ContactDetailDTO> getById(@PathVariable Long id) {
+    public ResponseEntity<ContactDetailDto> getById(@PathVariable Long id) {
         return ResponseEntity.ok(contactService.getById(id));
     }
 
     @GetMapping("/search/{userId}")
-    public ResponseEntity<Page<ContactDetailDTO>> search(
+    public ResponseEntity<Page<ContactDetailDto>> search(
             @PathVariable Long userId,
             @RequestParam(name = "keyword") String keyword,
             @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
@@ -40,7 +39,7 @@ public class ContactController {
     }
 
     @GetMapping("/organization/{organizationId}/{userId}")
-    public ResponseEntity<Page<ContactDetailDTO>> getByOrganization(
+    public ResponseEntity<Page<ContactDetailDto>> getByOrganization(
             @PathVariable Long organizationId,
             @PathVariable Long userId,
             @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
@@ -53,12 +52,12 @@ public class ContactController {
     }
 
     @PostMapping
-    public ResponseEntity<ContactMinimalDTO> create(@RequestBody ContactFormDTO contact) {
+    public ResponseEntity<ContactDetailDto> create(@RequestBody ContactFormDto contact) {
         return new ResponseEntity<>(contactService.create(contact), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ContactMinimalDTO> update(@PathVariable Long id, @RequestBody ContactFormDTO contact) {
+    public ResponseEntity<ContactDetailDto> update(@PathVariable Long id, @RequestBody ContactFormDto contact) {
         return new ResponseEntity<>(contactService.update(id, contact), HttpStatus.CREATED);
     }
 

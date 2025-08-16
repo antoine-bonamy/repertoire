@@ -1,10 +1,13 @@
 package fr.bonamy.repertoire_back.dto.Organization;
 
+import fr.bonamy.repertoire_back.dto.Contact.ContactDetailDto;
 import fr.bonamy.repertoire_back.dto.User.UserDetailDto;
 import fr.bonamy.repertoire_back.model.Organization;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
+
+import java.util.List;
 
 @Data
 public class OrganizationFormDto {
@@ -19,11 +22,14 @@ public class OrganizationFormDto {
     @NotNull(message = "User cannot be null")
     private UserDetailDto user;
 
+    private List<ContactDetailDto> contacts;
+
     public static OrganizationFormDto of(Organization organization) {
         OrganizationFormDto dto = new OrganizationFormDto();
         dto.setName(organization.getName());
         dto.setNote(organization.getNote());
         dto.setUser(UserDetailDto.of(organization.getUser()));
+        dto.setContacts(organization.getContacts().stream().map(ContactDetailDto::of).toList());
         return dto;
     }
 
