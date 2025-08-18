@@ -1,10 +1,9 @@
 package fr.bonamy.repertoire_back.dto.Contact;
 
-import fr.bonamy.repertoire_back.dto.Group.GroupDetailDTO;
+import fr.bonamy.repertoire_back.dto.Group.GroupDetailDto;
 import fr.bonamy.repertoire_back.dto.Organization.OrganizationDetailDto;
 import fr.bonamy.repertoire_back.dto.User.UserDetailDto;
 import fr.bonamy.repertoire_back.model.Contact;
-import fr.bonamy.repertoire_back.model.Group;
 import lombok.Data;
 
 import java.util.List;
@@ -19,7 +18,7 @@ public class ContactFormDto {
     private String note;
     private OrganizationDetailDto organization;
     private UserDetailDto user;
-    private List<GroupDetailDTO> groups;
+    private List<GroupDetailDto> groups;
 
     public static ContactFormDto of(Contact contact) {
         ContactFormDto dto = new ContactFormDto();
@@ -30,7 +29,7 @@ public class ContactFormDto {
         dto.setAddress(contact.getAddress());
         dto.setOrganization(OrganizationDetailDto.of(contact.getOrganization()));
         dto.setUser(UserDetailDto.of(contact.getUser()));
-        dto.setGroups(contact.getGroups());
+        dto.setGroups(contact.getGroups().stream().map(GroupDetailDto::of).toList());
         return dto;
     }
 }

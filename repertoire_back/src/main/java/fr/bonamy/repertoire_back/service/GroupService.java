@@ -1,11 +1,9 @@
 package fr.bonamy.repertoire_back.service;
 
-import fr.bonamy.repertoire_back.dto.Group.GroupDetailDTO;
-import fr.bonamy.repertoire_back.dto.Group.GroupFormDTO;
-import fr.bonamy.repertoire_back.dto.Group.GroupMinimalDTO;
+import fr.bonamy.repertoire_back.dto.Group.GroupDetailDto;
+import fr.bonamy.repertoire_back.dto.Group.GroupFormDto;
 import fr.bonamy.repertoire_back.exception.ResourceAlreadyExist;
 import fr.bonamy.repertoire_back.exception.ResourceNotFoundException;
-import fr.bonamy.repertoire_back.mapper.GroupMapper;
 import fr.bonamy.repertoire_back.model.Group;
 import fr.bonamy.repertoire_back.repository.GroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,18 +19,12 @@ public class GroupService {
     private static final String CONTACT_ALREADY_IN_GROUP = "Contact with id=%s is already in group with id=%s";
 
     private final GroupRepository groupRepository;
-    private final GroupMapper groupMapper;
     private final UserService userService;
     private final ContactService contactService;
 
     @Autowired
-    public GroupService(
-            GroupRepository groupRepository,
-            GroupMapper groupMapper,
-            UserService userService,
-            ContactService contactService) {
+    public GroupService(GroupRepository groupRepository, UserService userService, ContactService contactService) {
         this.groupRepository = groupRepository;
-        this.groupMapper = groupMapper;
         this.userService = userService;
         this.contactService = contactService;
     }
@@ -42,29 +34,29 @@ public class GroupService {
                 .orElseThrow(() -> new ResourceNotFoundException(String.format(GROUP_NOT_FOUND, id)));
     }
 
-    public GroupDetailDTO getById(Long id) {
-        return groupRepository.findById(id).map(x -> groupMapper.toDto(x, GroupDetailDTO.class))
+    public GroupDetailDto getById(Long id) {
+        return groupRepository.findById(id).map(GroupDetailDto::of)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format(GROUP_NOT_FOUND, id)));
     }
 
-    public Page<GroupDetailDTO> search(Long userId, String keyword, String sortBy, String sortOrder, int page,
+    public Page<GroupDetailDto> search(Long userId, String keyword, String sortBy, String sortOrder, int page,
                                        int size) {
         return groupRepository.search(
                         userId, keyword, initPageable(sortBy, sortOrder, page, size))
-                .map(x -> groupMapper.toDto(x, GroupDetailDTO.class));
+                .map(GroupDetailDto::of);
     }
 
-    public GroupMinimalDTO create(GroupFormDTO dto) {
-        userService.exist(dto.user().id());
-        return groupMapper.toDto(groupRepository.save(groupMapper.toEntity(dto)), GroupMinimalDTO.class);
+    public GroupDetailDto create(GroupFormDto dto) {
+        userService.exist(dto.getUser().getId());
+        return GroupDetailDto.of(groupRepository.save(Group.of(dto)));
     }
 
-    public GroupMinimalDTO update(Long id, GroupFormDTO dto) {
+    public GroupDetailDto update(Long id, GroupFormDto dto) {
         exist(id);
-        userService.getById(dto.user().id());
-        Group newGroup = groupMapper.toEntity(dto);
+        userService.getById(dto.getUser().getId());
+        Group newGroup = Group.of(dto);
         newGroup.setId(id);
-        return groupMapper.toDto(groupRepository.save(newGroup), GroupMinimalDTO.class);
+        return GroupDetailDto.of(groupRepository.save(newGroup));
     }
 
     public Boolean delete(Long id) {
@@ -86,6 +78,5 @@ public class GroupService {
         exist(groupId);
         groupRepository.removeContact(groupId, contactId);
     }
-
 
 }

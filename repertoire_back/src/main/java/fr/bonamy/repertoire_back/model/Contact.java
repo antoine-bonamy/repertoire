@@ -65,7 +65,7 @@ public class Contact {
         contact.setNote(dto.getNote());
         contact.setOrganization(Organization.of(dto.getOrganization()));
         contact.setUser(User.of(dto.getUser()));
-        contact.setGroups(dto.getGroups());
+        contact.setGroups(dto.getGroups().stream().map(Group::of).toList());
         return contact;
     }
 

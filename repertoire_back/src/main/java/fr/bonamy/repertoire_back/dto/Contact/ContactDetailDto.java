@@ -11,7 +11,7 @@ public class ContactDetailDto extends ContactFormDto {
     private Long id;
 
     public static ContactDetailDto of(Contact contact) {
-        ContactDetailDto dto = new ContactDetailDto();
+        ContactDetailDto dto =(ContactDetailDto) ContactFormDto.of(contact);
         dto.setId(contact.getId());
         return dto;
     }
