@@ -1,7 +1,6 @@
 package fr.bonamy.repertoire_back.service;
 
-import fr.bonamy.repertoire_back.dto.User.UserDetailDto;
-import fr.bonamy.repertoire_back.dto.User.UserFormDto;
+import fr.bonamy.repertoire_back.dto.UserDto;
 import fr.bonamy.repertoire_back.exception.ResourceAlreadyExist;
 import fr.bonamy.repertoire_back.exception.ResourceNotFoundException;
 import fr.bonamy.repertoire_back.model.User;
@@ -31,19 +30,19 @@ public class UserService {
                 () -> new ResourceNotFoundException(String.format(USER_NOT_FOUND, id)));
     }
 
-    public UserDetailDto getById(Long id) {
-        return userRepository.findById(id).map(UserDetailDto::of).orElseThrow(
+    public UserDto getById(Long id) {
+        return userRepository.findById(id).map(UserDto::of).orElseThrow(
                 () -> new ResourceNotFoundException(String.format(USER_NOT_FOUND, id)));
     }
 
-    public Page<UserDetailDto> search(String keyword, String sortBy, String sortOrder, int page, int size) {
+    public Page<UserDto> search(String keyword, String sortBy, String sortOrder, int page, int size) {
         return userRepository.
                 findByFirstnameContainingIgnoreCaseOrLastnameContainingIgnoreCaseOrEmailContainingIgnoreCase(
                         keyword, keyword, keyword, initPageable(sortBy, sortOrder, page, size))
-                .map(UserDetailDto::of);
+                .map(UserDto::of);
     }
 
-    public UserDetailDto create(UserFormDto dto) {
+    public UserDto create(UserDto dto) {
         User user = User.of(dto);
         User probe = new User();
         probe.setEmail(user.getEmail());
@@ -51,23 +50,23 @@ public class UserService {
             throw new ResourceAlreadyExist(String.format(USER_ALREADY_EXIST, user.getEmail()));
         }
         user = userRepository.save(user);
-        return UserDetailDto.of(user);
+        return UserDto.of(user);
     }
 
-    public UserDetailDto update(Long id, UserFormDto dto) {
+    public UserDto update(Long id, UserDto dto) {
         exist(id);
         User newUser = User.of(dto);
         newUser.setId(id);
         userRepository.save(newUser);
-        return UserDetailDto.of(newUser);
+        return UserDto.of(newUser);
     }
 
-    public UserDetailDto updatePassword(Long id, UserFormDto newUser) {
+    public UserDto updatePassword(Long id, UserDto newUser) {
         User user = userRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException(String.format(USER_NOT_FOUND, id)));
         userRepository.updatePassword(id, newUser.getPassword());
         user.setPassword(newUser.getPassword());
-        return UserDetailDto.of(user);
+        return UserDto.of(user);
     }
 
     public Boolean delete(Long id) {

@@ -1,7 +1,6 @@
 package fr.bonamy.repertoire_back.service;
 
-import fr.bonamy.repertoire_back.dto.Group.GroupDetailDto;
-import fr.bonamy.repertoire_back.dto.Group.GroupFormDto;
+import fr.bonamy.repertoire_back.dto.GroupDto;
 import fr.bonamy.repertoire_back.exception.ResourceAlreadyExist;
 import fr.bonamy.repertoire_back.exception.ResourceNotFoundException;
 import fr.bonamy.repertoire_back.model.Group;
@@ -34,29 +33,29 @@ public class GroupService {
                 .orElseThrow(() -> new ResourceNotFoundException(String.format(GROUP_NOT_FOUND, id)));
     }
 
-    public GroupDetailDto getById(Long id) {
-        return groupRepository.findById(id).map(GroupDetailDto::of)
+    public GroupDto getById(Long id) {
+        return groupRepository.findById(id).map(GroupDto::of)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format(GROUP_NOT_FOUND, id)));
     }
 
-    public Page<GroupDetailDto> search(Long userId, String keyword, String sortBy, String sortOrder, int page,
-                                       int size) {
+    public Page<GroupDto> search(Long userId, String keyword, String sortBy, String sortOrder, int page,
+                                 int size) {
         return groupRepository.search(
                         userId, keyword, initPageable(sortBy, sortOrder, page, size))
-                .map(GroupDetailDto::of);
+                .map(GroupDto::of);
     }
 
-    public GroupDetailDto create(GroupFormDto dto) {
+    public GroupDto create(GroupDto dto) {
         userService.exist(dto.getUser().getId());
-        return GroupDetailDto.of(groupRepository.save(Group.of(dto)));
+        return GroupDto.of(groupRepository.save(Group.of(dto)));
     }
 
-    public GroupDetailDto update(Long id, GroupFormDto dto) {
+    public GroupDto update(Long id, GroupDto dto) {
         exist(id);
         userService.getById(dto.getUser().getId());
         Group newGroup = Group.of(dto);
         newGroup.setId(id);
-        return GroupDetailDto.of(groupRepository.save(newGroup));
+        return GroupDto.of(groupRepository.save(newGroup));
     }
 
     public Boolean delete(Long id) {

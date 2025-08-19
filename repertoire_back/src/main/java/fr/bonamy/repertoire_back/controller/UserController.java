@@ -1,7 +1,6 @@
 package fr.bonamy.repertoire_back.controller;
 
-import fr.bonamy.repertoire_back.dto.User.UserDetailDto;
-import fr.bonamy.repertoire_back.dto.User.UserFormDto;
+import fr.bonamy.repertoire_back.dto.UserDto;
 import fr.bonamy.repertoire_back.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +22,12 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDetailDto> getById(@PathVariable Long id) {
+    public ResponseEntity<UserDto> getById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getById(id));
     }
 
     @GetMapping
-    public ResponseEntity<Page<UserDetailDto>> search(
+    public ResponseEntity<Page<UserDto>> search(
             @RequestParam(name = "keyword", defaultValue = "") String keyword,
             @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
             @RequestParam(name = "sortOrder", defaultValue = "asc") String sortOrder,
@@ -39,19 +38,19 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserDetailDto> create(@Valid @RequestBody UserFormDto userDTO) {
+    public ResponseEntity<UserDto> create(@Valid @RequestBody UserDto userDTO) {
         return new ResponseEntity<>(userService.create(userDTO), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserDetailDto> update(@PathVariable Long id, @Valid @RequestBody UserFormDto userDTO) {
+    public ResponseEntity<UserDto> update(@PathVariable Long id, @Valid @RequestBody UserDto userDTO) {
         return new ResponseEntity<>(userService.update(id, userDTO), HttpStatus.CREATED);
     }
 
     @PutMapping("password/{id}")
-    public ResponseEntity<UserDetailDto> updatePassword(
+    public ResponseEntity<UserDto> updatePassword(
             @PathVariable Long id,
-            @Valid @RequestBody UserFormDto user) {
+            @Valid @RequestBody UserDto user) {
         return new ResponseEntity<>(userService.updatePassword(id, user), HttpStatus.CREATED);
     }
 

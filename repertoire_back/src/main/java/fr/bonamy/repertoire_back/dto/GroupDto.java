@@ -1,13 +1,14 @@
-package fr.bonamy.repertoire_back.dto.Group;
+package fr.bonamy.repertoire_back.dto;
 
-import fr.bonamy.repertoire_back.dto.User.UserDetailDto;
 import fr.bonamy.repertoire_back.model.Group;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
 @Data
-public class GroupFormDto {
+public class GroupDto {
+
+    private Long id;
 
     @NotNull(message = "Name cannot be null")
     @Length(min = 1, max = 64, message = "Name length must be between 1 and 64")
@@ -17,13 +18,14 @@ public class GroupFormDto {
     private String note;
 
     @NotNull(message = "UserId cannot be null")
-    private UserDetailDto user;
+    private UserDto user;
 
-    public static GroupFormDto of(Group group) {
-        GroupFormDto dto = new GroupFormDto();
+    public static GroupDto of(Group group) {
+        GroupDto dto = new GroupDto();
+        group.setId(group.getId());
         dto.setName(group.getName());
         dto.setNote(group.getNote());
-        dto.setUser(fr.bonamy.repertoire_back.dto.User.UserDetailDto.of(group.getUser()));
+        dto.setUser(UserDto.of(group.getUser()));
         return dto;
     }
 }
