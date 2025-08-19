@@ -1,7 +1,5 @@
-package fr.bonamy.repertoire_back.dto.Organization;
+package fr.bonamy.repertoire_back.dto;
 
-import fr.bonamy.repertoire_back.dto.Contact.ContactDetailDto;
-import fr.bonamy.repertoire_back.dto.User.UserDetailDto;
 import fr.bonamy.repertoire_back.model.Organization;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -10,7 +8,9 @@ import org.hibernate.validator.constraints.Length;
 import java.util.List;
 
 @Data
-public class OrganizationFormDto {
+public class OrganizationDto {
+
+    private Long id;
 
     @NotNull(message = "Name cannot be null")
     @Length(min = 1, max = 64, message = "Name length must be between 1 and 64")
@@ -20,16 +20,17 @@ public class OrganizationFormDto {
     private String note;
 
     @NotNull(message = "User cannot be null")
-    private UserDetailDto user;
+    private UserDto user;
 
-    private List<ContactDetailDto> contacts;
+    private List<ContactDto> contacts;
 
-    public static OrganizationFormDto of(Organization organization) {
-        OrganizationFormDto dto = new OrganizationFormDto();
+    public static OrganizationDto of(Organization organization) {
+        OrganizationDto dto = new OrganizationDto();
+        dto.setId(organization.getId());
         dto.setName(organization.getName());
         dto.setNote(organization.getNote());
-        dto.setUser(UserDetailDto.of(organization.getUser()));
-        dto.setContacts(organization.getContacts().stream().map(ContactDetailDto::of).toList());
+        dto.setUser(UserDto.of(organization.getUser()));
+        dto.setContacts(organization.getContacts().stream().map(ContactDto::of).toList());
         return dto;
     }
 

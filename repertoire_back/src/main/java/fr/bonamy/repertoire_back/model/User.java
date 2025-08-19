@@ -1,9 +1,8 @@
 package fr.bonamy.repertoire_back.model;
 
-import fr.bonamy.repertoire_back.dto.User.UserDetailDto;
-import fr.bonamy.repertoire_back.dto.User.UserFormDto;
+import fr.bonamy.repertoire_back.dto.UserDto;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
 
 
 @Entity
@@ -27,11 +26,9 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    public static User of(UserFormDto dto) {
+    public static User of(UserDto dto) {
         User user = new User();
-        if (dto instanceof UserDetailDto) {
-             user.setId(((UserDetailDto) dto).getId());
-        }
+        user.setId(dto.getId());
         user.setFirstname(dto.getFirstname());
         user.setLastname(dto.getLastname());
         user.setEmail(dto.getEmail());

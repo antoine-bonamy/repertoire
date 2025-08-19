@@ -1,7 +1,6 @@
 package fr.bonamy.repertoire_back.model;
 
-import fr.bonamy.repertoire_back.dto.Group.GroupDetailDto;
-import fr.bonamy.repertoire_back.dto.Group.GroupFormDto;
+import fr.bonamy.repertoire_back.dto.GroupDto;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -33,11 +32,9 @@ public class Group {
             inverseJoinColumns = @JoinColumn(name = "contact_id"))
     private List<Contact> contacts;
 
-    public static Group of(GroupFormDto dto) {
+    public static Group of(GroupDto dto) {
         Group group = new Group();
-        if (dto instanceof GroupDetailDto) {
-            group.setId(((GroupDetailDto) dto).getId());
-        }
+        group.setId(dto.getId());
         group.setName(dto.getName());
         group.setNote(dto.getNote());
         group.setUser(User.of(dto.getUser()));

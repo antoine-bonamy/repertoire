@@ -1,13 +1,10 @@
 package fr.bonamy.repertoire_back.model;
 
-
-import fr.bonamy.repertoire_back.dto.Contact.ContactDetailDto;
-import fr.bonamy.repertoire_back.dto.Contact.ContactFormDto;
+import fr.bonamy.repertoire_back.dto.ContactDto;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Table(name = "contact")
@@ -52,11 +49,9 @@ public class Contact {
     )
     private List<Group> groups;
 
-    public static Contact of(ContactFormDto dto) {
-        Contact contact =  new Contact();
-        if (dto instanceof ContactDetailDto) {
-            contact.setId(((ContactDetailDto) dto).getId());
-        }
+    public static Contact of(ContactDto dto) {
+        Contact contact = new Contact();
+        contact.setId(dto.getId());
         contact.setFirstname(dto.getFirstname());
         contact.setLastname(dto.getLastname());
         contact.setEmail(dto.getEmail());

@@ -1,8 +1,7 @@
 package fr.bonamy.repertoire_back.controller;
 
 import fr.bonamy.repertoire_back.dto.AddContactToGroupDTO;
-import fr.bonamy.repertoire_back.dto.Group.GroupDetailDto;
-import fr.bonamy.repertoire_back.dto.Group.GroupFormDto;
+import fr.bonamy.repertoire_back.dto.GroupDto;
 import fr.bonamy.repertoire_back.service.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,12 +22,12 @@ public class GroupController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<GroupDetailDto> getById(@PathVariable("id") Long id) {
+    public ResponseEntity<GroupDto> getById(@PathVariable("id") Long id) {
         return ResponseEntity.ok(groupService.getById(id));
     }
 
     @GetMapping("/search/{userId}")
-    public ResponseEntity<Page<GroupDetailDto>> search(
+    public ResponseEntity<Page<GroupDto>> search(
             @PathVariable Long userId,
             @RequestParam(name = "keyword") String keyword,
             @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
@@ -40,12 +39,12 @@ public class GroupController {
     }
 
     @PostMapping
-    public ResponseEntity<GroupDetailDto> creatE(@RequestBody GroupFormDto dto) {
+    public ResponseEntity<GroupDto> creatE(@RequestBody GroupDto dto) {
         return new ResponseEntity<>(groupService.create(dto), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<GroupDetailDto> update(@PathVariable Long id, @RequestBody GroupFormDto dto) {
+    public ResponseEntity<GroupDto> update(@PathVariable Long id, @RequestBody GroupDto dto) {
         return new ResponseEntity<>(groupService.update(id, dto), HttpStatus.CREATED);
     }
 

@@ -1,7 +1,6 @@
 package fr.bonamy.repertoire_back.controller;
 
-import fr.bonamy.repertoire_back.dto.Organization.OrganizationDetailDto;
-import fr.bonamy.repertoire_back.dto.Organization.OrganizationFormDto;
+import fr.bonamy.repertoire_back.dto.OrganizationDto;
 import fr.bonamy.repertoire_back.service.OrganizationService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +22,12 @@ public class OrganizationController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<OrganizationDetailDto> getById(@PathVariable Long id) {
+    public ResponseEntity<OrganizationDto> getById(@PathVariable Long id) {
         return ResponseEntity.ok(organizationService.getById(id));
     }
 
     @GetMapping("/search/{userId}")
-    public ResponseEntity<Page<OrganizationDetailDto>> getByNameIgnoreCaseAndCommentIgnoreCase(
+    public ResponseEntity<Page<OrganizationDto>> getByNameIgnoreCaseAndCommentIgnoreCase(
             @PathVariable Long userId,
             @RequestParam(name = "keyword", defaultValue = "") String keyword,
             @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
@@ -41,15 +40,15 @@ public class OrganizationController {
     }
 
     @PostMapping
-    public ResponseEntity<OrganizationDetailDto> create(
-            @Valid @RequestBody OrganizationFormDto organizationFormDto) {
-        return new ResponseEntity<>(organizationService.create(organizationFormDto), HttpStatus.CREATED);
+    public ResponseEntity<OrganizationDto> create(
+            @Valid @RequestBody OrganizationDto organizationDto) {
+        return new ResponseEntity<>(organizationService.create(organizationDto), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<OrganizationDetailDto> update(
-            @PathVariable Long id, @Valid @RequestBody OrganizationFormDto organizationFormDto) {
-        return new ResponseEntity<>(organizationService.update(id, organizationFormDto), HttpStatus.CREATED);
+    public ResponseEntity<OrganizationDto> update(
+            @PathVariable Long id, @Valid @RequestBody OrganizationDto organizationDto) {
+        return new ResponseEntity<>(organizationService.update(id, organizationDto), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")

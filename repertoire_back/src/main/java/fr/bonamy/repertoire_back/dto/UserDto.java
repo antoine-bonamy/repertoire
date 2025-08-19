@@ -1,4 +1,4 @@
-package fr.bonamy.repertoire_back.dto.User;
+package fr.bonamy.repertoire_back.dto;
 
 import fr.bonamy.repertoire_back.model.User;
 import fr.bonamy.repertoire_back.util.ValidPassword;
@@ -9,7 +9,9 @@ import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
 @Data
-public class UserFormDto {
+public class UserDto {
+
+    private Long id;
 
     @NotNull(message = "Firstname cannot be null.")
     @Length(max = 64, message = "Firstname length cannot be superior to 64.")
@@ -27,8 +29,9 @@ public class UserFormDto {
     @ValidPassword(message = "Invalid password.")
     private String password;
 
-    public static UserFormDto of(User user) {
-        UserFormDto dto = new UserFormDto();
+    public static UserDto of(User user) {
+        UserDto dto = new UserDto();
+        dto.setId(user.getId());
         dto.setFirstname(user.getFirstname());
         dto.setLastname(user.getLastname());
         dto.setEmail(user.getEmail());
